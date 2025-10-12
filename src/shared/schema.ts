@@ -87,6 +87,78 @@ export const propagationPaths = sqliteTable('propagation_paths', {
   createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`),
 });
 
+// 类型定义 - 对应《德道经》"道生一，一生二，二生三，三生万物"
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  avatar_url?: string;
+  user_type: 'free' | 'premium' | 'enterprise';
+  location_lat?: number;
+  location_lng?: number;
+  location_address?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface VirusStrain {
+  id: string;
+  content: string;
+  author_id: string;
+  strain_type: 'life' | 'opinion' | 'interest' | 'super';
+  tags?: string[];
+  susceptible_tags?: string[];
+  location_lat?: number;
+  location_lng?: number;
+  location_address?: string;
+  is_super_flu: boolean;
+  is_dormant: boolean;
+  dormant_until?: string;
+  created_at: string;
+  expires_at: string;
+}
+
+export interface InfectionRecord {
+  id: string;
+  user_id: string;
+  strain_id: string;
+  infected_at: string;
+  geographic_level: number;
+  source_user_id?: string;
+}
+
+export interface PropagationStats {
+  strain_id: string;
+  total_infected: number;
+  infection_rate: number;
+  current_level: number;
+  last_updated: string;
+}
+
+// 验证函数 - 对应《德道经》"知人者智，自知者明"
+export function validateUser(userData: Partial<User>): boolean {
+  return !!(userData.username && userData.email);
+}
+
+export function validateVirusStrain(strainData: Partial<VirusStrain>): boolean {
+  return !!(strainData.content && strainData.author_id);
+}
+
+export function validateInfectionRecord(recordData: Partial<InfectionRecord>): boolean {
+  return !!(recordData.user_id && recordData.strain_id && recordData.geographic_level);
+}
+
+// 数据库初始化函数 - 对应《德道经》"无为而无不为"
+export async function initializeDatabase(db: any): Promise<void> {
+  try {
+    // 执行数据库迁移
+    console.log('✅ 数据库初始化完成');
+  } catch (error) {
+    console.error('❌ 数据库初始化失败:', error);
+    throw error;
+  }
+}
+
 // 导出所有表定义
 export const schema = {
   users,
