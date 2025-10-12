@@ -303,11 +303,44 @@ const server = serve({
         success: true,
         message: '代码更新成功，API路由正常工作',
         timestamp: new Date().toISOString(),
-        version: '2025-01-12-v3'
+        version: '2025-01-12-v4'
       }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' }
       });
+    }
+    
+    // 监控系统测试API
+    if (url.pathname === '/api/monitoring/test') {
+      try {
+        // 测试监控系统导入
+        const { performanceMonitor } = await import('./lib/monitoring/performance-middleware');
+        const { errorMonitor } = await import('./lib/monitoring/error-monitoring');
+        
+        return new Response(JSON.stringify({
+          success: true,
+          message: '监控系统导入成功',
+          data: {
+            performanceMonitor: !!performanceMonitor,
+            errorMonitor: !!errorMonitor,
+            timestamp: Date.now()
+          },
+          timestamp: new Date().toISOString(),
+        }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      } catch (error) {
+        return new Response(JSON.stringify({
+          success: false,
+          message: '监控系统导入失败',
+          error: error instanceof Error ? error.message : '未知错误',
+          timestamp: new Date().toISOString(),
+        }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
     }
     
     // 监控API路由 - 对应《德道经》"知人者智，自知者明"
