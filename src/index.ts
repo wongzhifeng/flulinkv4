@@ -241,6 +241,51 @@ const server = serve({
       }
     }
     
+    // 简单表创建测试API - 调试用
+    if (url.pathname === '/api/debug/create-test-table') {
+      try {
+        const { tursoClient } = await import('./lib/database');
+        if (tursoClient) {
+          // 创建简单的测试表
+          await tursoClient.execute(`
+            CREATE TABLE IF NOT EXISTS test_table (
+              id TEXT PRIMARY KEY,
+              name TEXT NOT NULL,
+              created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+          `);
+          
+          return new Response(JSON.stringify({
+            success: true,
+            message: '测试表创建成功',
+            timestamp: new Date().toISOString(),
+          }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        } else {
+          return new Response(JSON.stringify({
+            success: false,
+            message: 'Turso客户端未初始化',
+            timestamp: new Date().toISOString(),
+          }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        }
+      } catch (error) {
+        return new Response(JSON.stringify({
+          success: false,
+          message: '创建测试表失败',
+          error: error instanceof Error ? error.message : '未知错误',
+          timestamp: new Date().toISOString(),
+        }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+    }
+    
     // 临时测试API - 验证代码更新
     if (url.pathname === '/api/test-update') {
       return new Response(JSON.stringify({
