@@ -101,6 +101,19 @@ const server = serve({
       }
     }
     
+    // 临时测试API - 验证代码更新
+    if (url.pathname === '/api/test-update') {
+      return new Response(JSON.stringify({
+        success: true,
+        message: '代码更新成功，API路由正常工作',
+        timestamp: new Date().toISOString(),
+        version: '2025-01-12-v2'
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    
     // 毒株API - 实现完整的CRUD操作
     if (url.pathname === '/api/strains') {
       if (request.method === 'GET') {
