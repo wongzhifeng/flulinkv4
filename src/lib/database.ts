@@ -293,7 +293,13 @@ export async function runDatabaseMigrations(): Promise<void> {
         CREATE INDEX IF NOT EXISTS idx_propagation_paths_strain ON propagation_paths(strain_id);
       `;
       
-      await db.execute(migrationSQL);
+      // 分割SQL语句并逐个执行
+      const statements = migrationSQL.split(';').filter(stmt => stmt.trim());
+      for (const statement of statements) {
+        if (statement.trim()) {
+          await db.run(statement.trim());
+        }
+      }
       console.log('✅ Turso数据库迁移完成');
     } else {
       console.log('ℹ️ 使用模拟数据库，跳过迁移');
@@ -309,7 +315,7 @@ export async function testDatabaseConnection(): Promise<boolean> {
   try {
     if (db) {
       // 测试Turso连接
-      await db.execute('SELECT 1');
+      await db.run('SELECT 1');
       console.log('✅ Turso数据库连接成功');
       return true;
     } else {
