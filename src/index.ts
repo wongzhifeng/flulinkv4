@@ -41,8 +41,19 @@ const propagationAPI = new GeographicPropagationAPI();
 
 // 自动执行数据库迁移 - 对应《德道经》"无为而无不为"
 console.log('🚀 FluLink应用启动中...');
-runSimpleMigration().then(() => {
-  console.log('✅ 数据库迁移完成，应用准备就绪');
+runSimpleMigration().then(async () => {
+  console.log('✅ 数据库迁移完成');
+  
+  // 初始化监控系统
+  try {
+    const { setupGlobalErrorHandling } = await import('./lib/monitoring/error-monitoring');
+    setupGlobalErrorHandling();
+    console.log('✅ 监控系统初始化完成');
+  } catch (error) {
+    console.error('❌ 监控系统初始化失败:', error);
+  }
+  
+  console.log('✅ 应用准备就绪');
 }).catch((error) => {
   console.error('❌ 数据库迁移失败:', error);
 });
@@ -297,6 +308,140 @@ const server = serve({
         status: 200,
         headers: { 'Content-Type': 'application/json' }
       });
+    }
+    
+    // 监控API路由 - 对应《德道经》"知人者智，自知者明"
+    if (url.pathname.startsWith('/api/monitoring/')) {
+      try {
+        // 性能监控API
+        if (url.pathname === '/api/monitoring/performance' && request.method === 'GET') {
+          const { getPerformanceStats } = await import('./server/api/monitoring/performance');
+          return await getPerformanceStats({ query: Object.fromEntries(url.searchParams) } as any, {
+            json: (data: any) => new Response(JSON.stringify(data), {
+              headers: { 'Content-Type': 'application/json' }
+            }),
+            status: (code: number) => ({ json: (data: any) => new Response(JSON.stringify(data), {
+              status: code,
+              headers: { 'Content-Type': 'application/json' }
+            }) })
+          } as any);
+        }
+        
+        if (url.pathname === '/api/monitoring/performance/health' && request.method === 'GET') {
+          const { getPerformanceHealth } = await import('./server/api/monitoring/performance');
+          return await getPerformanceHealth({} as any, {
+            json: (data: any) => new Response(JSON.stringify(data), {
+              headers: { 'Content-Type': 'application/json' }
+            }),
+            status: (code: number) => ({ json: (data: any) => new Response(JSON.stringify(data), {
+              status: code,
+              headers: { 'Content-Type': 'application/json' }
+            }) })
+          } as any);
+        }
+        
+        // 错误监控API
+        if (url.pathname === '/api/monitoring/errors' && request.method === 'GET') {
+          const { getErrorStats } = await import('./server/api/monitoring/errors');
+          return await getErrorStats({ query: Object.fromEntries(url.searchParams) } as any, {
+            json: (data: any) => new Response(JSON.stringify(data), {
+              headers: { 'Content-Type': 'application/json' }
+            }),
+            status: (code: number) => ({ json: (data: any) => new Response(JSON.stringify(data), {
+              status: code,
+              headers: { 'Content-Type': 'application/json' }
+            }) })
+          } as any);
+        }
+        
+        if (url.pathname === '/api/monitoring/errors/unresolved' && request.method === 'GET') {
+          const { getUnresolvedErrors } = await import('./server/api/monitoring/errors');
+          return await getUnresolvedErrors({} as any, {
+            json: (data: any) => new Response(JSON.stringify(data), {
+              headers: { 'Content-Type': 'application/json' }
+            }),
+            status: (code: number) => ({ json: (data: any) => new Response(JSON.stringify(data), {
+              status: code,
+              headers: { 'Content-Type': 'application/json' }
+            }) })
+          } as any);
+        }
+        
+        if (url.pathname.startsWith('/api/monitoring/errors/resolve/') && request.method === 'POST') {
+          const errorId = url.pathname.split('/')[4];
+          const { markErrorResolved } = await import('./server/api/monitoring/errors');
+          return await markErrorResolved({ params: { errorId } } as any, {
+            json: (data: any) => new Response(JSON.stringify(data), {
+              headers: { 'Content-Type': 'application/json' }
+            }),
+            status: (code: number) => ({ json: (data: any) => new Response(JSON.stringify(data), {
+              status: code,
+              headers: { 'Content-Type': 'application/json' }
+            }) })
+          } as any);
+        }
+        
+        if (url.pathname === '/api/monitoring/errors/health' && request.method === 'GET') {
+          const { getErrorHealth } = await import('./server/api/monitoring/errors');
+          return await getErrorHealth({} as any, {
+            json: (data: any) => new Response(JSON.stringify(data), {
+              headers: { 'Content-Type': 'application/json' }
+            }),
+            status: (code: number) => ({ json: (data: any) => new Response(JSON.stringify(data), {
+              status: code,
+              headers: { 'Content-Type': 'application/json' }
+            }) })
+          } as any);
+        }
+        
+        // 监控仪表板API
+        if (url.pathname === '/api/monitoring/dashboard' && request.method === 'GET') {
+          const { getDashboardData } = await import('./server/api/monitoring/dashboard');
+          return await getDashboardData({ query: Object.fromEntries(url.searchParams) } as any, {
+            json: (data: any) => new Response(JSON.stringify(data), {
+              headers: { 'Content-Type': 'application/json' }
+            }),
+            status: (code: number) => ({ json: (data: any) => new Response(JSON.stringify(data), {
+              status: code,
+              headers: { 'Content-Type': 'application/json' }
+            }) })
+          } as any);
+        }
+        
+        if (url.pathname === '/api/monitoring/health' && request.method === 'GET') {
+          const { getSystemHealth } = await import('./server/api/monitoring/dashboard');
+          return await getSystemHealth({} as any, {
+            json: (data: any) => new Response(JSON.stringify(data), {
+              headers: { 'Content-Type': 'application/json' }
+            }),
+            status: (code: number) => ({ json: (data: any) => new Response(JSON.stringify(data), {
+              status: code,
+              headers: { 'Content-Type': 'application/json' }
+            }) })
+          } as any);
+        }
+        
+        // 未找到的监控端点
+        return new Response(JSON.stringify({
+          success: false,
+          message: '监控API端点不存在',
+          timestamp: new Date().toISOString(),
+        }), {
+          status: 404,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      } catch (error) {
+        console.error('监控API加载失败:', error);
+        return new Response(JSON.stringify({
+          success: false,
+          message: '监控API加载失败',
+          error: error instanceof Error ? error.message : '未知错误',
+          timestamp: new Date().toISOString(),
+        }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
     }
     
     // 毒株API - 实现完整的CRUD操作

@@ -87,6 +87,43 @@ export const propagationPaths = sqliteTable('propagation_paths', {
   createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`),
 });
 
+// 监控指标表 - 对应《德道经》"知人者智，自知者明"
+export const monitoringMetrics = sqliteTable('monitoring_metrics', {
+  id: text('id').primaryKey(),
+  type: text('type').notNull(), // 'performance', 'error', 'user_behavior', 'system'
+  metric: text('metric').notNull(),
+  value: real('value').notNull(),
+  timestamp: integer('timestamp').notNull(),
+  metadata: text('metadata'), // JSON string
+  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`),
+});
+
+// 错误日志表 - 对应《德道经》"知足者富"
+export const errorLogs = sqliteTable('error_logs', {
+  id: text('id').primaryKey(),
+  level: text('level').notNull(), // 'error', 'warning', 'info'
+  message: text('message').notNull(),
+  stack: text('stack'),
+  url: text('url'),
+  userId: text('user_id').references(() => users.id),
+  metadata: text('metadata'), // JSON string
+  resolved: integer('resolved').notNull().default(0), // 0: unresolved, 1: resolved
+  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`),
+  resolvedAt: text('resolved_at'),
+});
+
+// 用户会话表 - 对应《德道经》"修之于身，其德乃真"
+export const userSessions = sqliteTable('user_sessions', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id),
+  sessionToken: text('session_token').notNull().unique(),
+  ipAddress: text('ip_address'),
+  userAgent: text('user_agent'),
+  lastActivity: text('last_activity').notNull(),
+  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`),
+  expiresAt: text('expires_at').notNull(),
+});
+
 // 类型定义 - 对应《德道经》"道生一，一生二，二生三，三生万物"
 export interface User {
   id: string;
@@ -135,6 +172,40 @@ export interface PropagationStats {
   last_updated: string;
 }
 
+export interface MonitoringMetric {
+  id: string;
+  type: 'performance' | 'error' | 'user_behavior' | 'system';
+  metric: string;
+  value: number;
+  timestamp: number;
+  metadata?: string;
+  created_at: string;
+}
+
+export interface ErrorLog {
+  id: string;
+  level: 'error' | 'warning' | 'info';
+  message: string;
+  stack?: string;
+  url?: string;
+  user_id?: string;
+  metadata?: string;
+  resolved: boolean;
+  created_at: string;
+  resolved_at?: string;
+}
+
+export interface UserSession {
+  id: string;
+  user_id: string;
+  session_token: string;
+  ip_address?: string;
+  user_agent?: string;
+  last_activity: string;
+  created_at: string;
+  expires_at: string;
+}
+
 // 验证函数 - 对应《德道经》"知人者智，自知者明"
 export function validateUser(userData: Partial<User>): boolean {
   return !!(userData.username && userData.email);
@@ -168,4 +239,7 @@ export const schema = {
   geographicLevels,
   userImmunity,
   propagationPaths,
+  monitoringMetrics,
+  errorLogs,
+  userSessions,
 };
