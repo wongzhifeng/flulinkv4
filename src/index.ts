@@ -3,7 +3,7 @@
 
 import { serve } from 'bun';
 import { GeographicPropagationAPI } from './server/services/GeographicPropagationAPI';
-import { runDatabaseMigrations } from './lib/database';
+import { runSimpleMigration } from './lib/database';
 
 // 模拟数据存储 - 实际部署时将替换为Turso数据库
 const mockStrains = [
@@ -41,7 +41,7 @@ const propagationAPI = new GeographicPropagationAPI();
 
 // 自动执行数据库迁移 - 对应《德道经》"无为而无不为"
 console.log('🚀 FluLink应用启动中...');
-runDatabaseMigrations().then(() => {
+runSimpleMigration().then(() => {
   console.log('✅ 数据库迁移完成，应用准备就绪');
 }).catch((error) => {
   console.error('❌ 数据库迁移失败:', error);
