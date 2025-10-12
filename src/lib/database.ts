@@ -312,10 +312,33 @@ export async function runDatabaseMigrations(): Promise<void> {
 export async function testDatabaseConnection(): Promise<boolean> {
   try {
     if (db && tursoClient) {
-      // 使用Turso客户端的execute方法，而不是Drizzle的
-      await tursoClient.execute('SELECT 1');
-      console.log('✅ Turso数据库连接成功');
-      return true;
+      // 方法1：使用Turso客户端的execute方法
+      try {
+        await tursoClient.execute('SELECT 1');
+        console.log('✅ Turso数据库连接成功 (方法1)');
+        return true;
+      } catch (error1) {
+        console.log('⚠️ 方法1失败，尝试方法2:', error1.message);
+        
+        // 方法2：使用Turso客户端的query方法
+        try {
+          await tursoClient.query('SELECT 1');
+          console.log('✅ Turso数据库连接成功 (方法2)');
+          return true;
+        } catch (error2) {
+          console.log('⚠️ 方法2失败，尝试方法3:', error2.message);
+          
+          // 方法3：使用Drizzle的raw查询
+          try {
+            await db.run('SELECT 1');
+            console.log('✅ Turso数据库连接成功 (方法3)');
+            return true;
+          } catch (error3) {
+            console.log('❌ 所有方法都失败:', error3.message);
+            return false;
+          }
+        }
+      }
     } else {
       // 测试模拟数据库
       await mockDb.execute('SELECT 1');
