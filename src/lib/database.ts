@@ -180,20 +180,21 @@ if (useRealDatabase) {
 // 导出数据库实例
 export { mockDb };
 
-// 自动数据库迁移 - 对应《德道经》"无为而无不为"
-export async function runDatabaseMigrations(): Promise<void> {
+// 简化的数据库迁移 - 对应《德道经》"无为而无不为"
+export async function runSimpleMigration(): Promise<void> {
   if (!tursoClient) {
     console.log('⚠️ 跳过迁移：使用模拟数据库');
     return;
   }
 
   try {
-    console.log('🔄 开始执行Turso数据库迁移...');
+    console.log('🔄 开始执行简化数据库迁移...');
     
-    // 读取迁移文件并执行
-    const migrationSQL = `
-        -- 用户表
-        CREATE TABLE IF NOT EXISTS users (
+    // 逐个创建表，避免复杂SQL
+    const tables = [
+      {
+        name: 'users',
+        sql: `CREATE TABLE IF NOT EXISTS users (
           id TEXT PRIMARY KEY,
           username TEXT NOT NULL UNIQUE,
           email TEXT UNIQUE NOT NULL,
@@ -205,126 +206,112 @@ export async function runDatabaseMigrations(): Promise<void> {
           location_address TEXT,
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
           updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        );
-
-      -- 毒株表
-      CREATE TABLE IF NOT EXISTS virus_strains (
-        id TEXT PRIMARY KEY,
-        content TEXT NOT NULL,
-        author_id TEXT NOT NULL,
-        strain_type TEXT NOT NULL DEFAULT 'life',
-        tags TEXT,
-        susceptible_tags TEXT,
-        location_lat REAL,
-        location_lng REAL,
-        location_address TEXT,
-        is_super_flu INTEGER DEFAULT 0,
-        is_dormant INTEGER DEFAULT 0,
-        dormant_until DATETIME,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        expires_at DATETIME NOT NULL,
-        FOREIGN KEY (author_id) REFERENCES users(id)
-      );
-
-      -- 感染记录表
-      CREATE TABLE IF NOT EXISTS infection_records (
-        id TEXT PRIMARY KEY,
-        user_id TEXT NOT NULL,
-        strain_id TEXT NOT NULL,
-        infected_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        geographic_level INTEGER NOT NULL,
-        source_user_id TEXT,
-        FOREIGN KEY (user_id) REFERENCES users(id),
-        FOREIGN KEY (strain_id) REFERENCES virus_strains(id),
-        FOREIGN KEY (source_user_id) REFERENCES users(id)
-      );
-
-      -- 传播统计表
-      CREATE TABLE IF NOT EXISTS propagation_stats (
-        strain_id TEXT PRIMARY KEY,
-        total_infected INTEGER DEFAULT 0,
-        infection_rate REAL DEFAULT 0,
-        current_level INTEGER DEFAULT 1,
-        last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (strain_id) REFERENCES virus_strains(id)
-      );
-
-      -- 地理传播层级表
-      CREATE TABLE IF NOT EXISTS geographic_levels (
-        id INTEGER PRIMARY KEY,
-        level INTEGER NOT NULL,
-        name TEXT NOT NULL,
-        radius_km REAL NOT NULL,
-        delay_minutes INTEGER NOT NULL,
-        required_infected INTEGER NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      );
-
-      -- 用户免疫系统表
-      CREATE TABLE IF NOT EXISTS user_immunity (
-        id TEXT PRIMARY KEY,
-        user_id TEXT NOT NULL,
-        strain_type TEXT NOT NULL,
-        immunity_level INTEGER NOT NULL DEFAULT 1,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        expires_at DATETIME,
-        FOREIGN KEY (user_id) REFERENCES users(id)
-      );
-
-      -- 传播路径表
-      CREATE TABLE IF NOT EXISTS propagation_paths (
-        id TEXT PRIMARY KEY,
-        strain_id TEXT NOT NULL,
-        from_user_id TEXT NOT NULL,
-        to_user_id TEXT NOT NULL,
-        geographic_level INTEGER NOT NULL,
-        propagation_time TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (strain_id) REFERENCES virus_strains(id),
-        FOREIGN KEY (from_user_id) REFERENCES users(id),
-        FOREIGN KEY (to_user_id) REFERENCES users(id)
-      );
-
-      -- 插入初始地理传播层级数据
-      INSERT OR IGNORE INTO geographic_levels (level, name, radius_km, delay_minutes, required_infected) VALUES
-      (1, '本小区', 0.5, 0, 1),
-      (2, '临近小区', 1.5, 10, 20),
-      (3, '所属街道', 3.0, 45, 50),
-      (4, '行政区/城市', 10.0, 180, 100);
-
-      -- 创建索引优化查询性能
-      CREATE INDEX IF NOT EXISTS idx_users_location ON users(location_lat, location_lng);
-      CREATE INDEX IF NOT EXISTS idx_virus_strains_location ON virus_strains(location_lat, location_lng);
-      CREATE INDEX IF NOT EXISTS idx_virus_strains_type ON virus_strains(strain_type);
-      CREATE INDEX IF NOT EXISTS idx_infection_records_user ON infection_records(user_id);
-      CREATE INDEX IF NOT EXISTS idx_infection_records_strain ON infection_records(strain_id);
-      CREATE INDEX IF NOT EXISTS idx_propagation_paths_strain ON propagation_paths(strain_id);
-    `;
+        )`
+      },
+      {
+        name: 'virus_strains',
+        sql: `CREATE TABLE IF NOT EXISTS virus_strains (
+          id TEXT PRIMARY KEY,
+          content TEXT NOT NULL,
+          author_id TEXT NOT NULL,
+          strain_type TEXT NOT NULL DEFAULT 'life',
+          tags TEXT,
+          susceptible_tags TEXT,
+          location_lat REAL,
+          location_lng REAL,
+          location_address TEXT,
+          is_super_flu INTEGER DEFAULT 0,
+          is_dormant INTEGER DEFAULT 0,
+          dormant_until DATETIME,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          expires_at DATETIME NOT NULL
+        )`
+      },
+      {
+        name: 'infection_records',
+        sql: `CREATE TABLE IF NOT EXISTS infection_records (
+          id TEXT PRIMARY KEY,
+          user_id TEXT NOT NULL,
+          strain_id TEXT NOT NULL,
+          infected_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          geographic_level INTEGER NOT NULL,
+          source_user_id TEXT
+        )`
+      },
+      {
+        name: 'propagation_stats',
+        sql: `CREATE TABLE IF NOT EXISTS propagation_stats (
+          strain_id TEXT PRIMARY KEY,
+          total_infected INTEGER DEFAULT 0,
+          infection_rate REAL DEFAULT 0,
+          current_level INTEGER DEFAULT 1,
+          last_updated DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`
+      },
+      {
+        name: 'geographic_levels',
+        sql: `CREATE TABLE IF NOT EXISTS geographic_levels (
+          id INTEGER PRIMARY KEY,
+          level INTEGER NOT NULL,
+          name TEXT NOT NULL,
+          radius_km REAL NOT NULL,
+          delay_minutes INTEGER NOT NULL,
+          required_infected INTEGER NOT NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`
+      },
+      {
+        name: 'user_immunity',
+        sql: `CREATE TABLE IF NOT EXISTS user_immunity (
+          id TEXT PRIMARY KEY,
+          user_id TEXT NOT NULL,
+          strain_type TEXT NOT NULL,
+          immunity_level INTEGER NOT NULL DEFAULT 1,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          expires_at DATETIME
+        )`
+      },
+      {
+        name: 'propagation_paths',
+        sql: `CREATE TABLE IF NOT EXISTS propagation_paths (
+          id TEXT PRIMARY KEY,
+          strain_id TEXT NOT NULL,
+          from_user_id TEXT NOT NULL,
+          to_user_id TEXT NOT NULL,
+          geographic_level INTEGER NOT NULL,
+          propagation_time TEXT NOT NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`
+      }
+    ];
     
-    // 分割SQL语句并逐个执行
-    const statements = migrationSQL
-      .split(';')
-      .map(stmt => stmt.trim())
-      .filter(stmt => stmt && !stmt.startsWith('--'));
-    
-    console.log(`🔄 开始执行 ${statements.length} 个SQL语句...`);
-    
-    for (let i = 0; i < statements.length; i++) {
-      const statement = statements[i];
-      if (statement) {
-        try {
-          await tursoClient.execute(statement);
-          console.log(`✅ 执行语句 ${i + 1}/${statements.length}: ${statement.substring(0, 50)}...`);
-        } catch (error) {
-          console.log(`⚠️ 语句 ${i + 1} 执行失败，可能已存在: ${error.message}`);
-          // 继续执行其他语句，不中断迁移过程
-        }
+    // 逐个创建表
+    for (const table of tables) {
+      try {
+        await tursoClient.execute(table.sql);
+        console.log(`✅ 创建表 ${table.name} 成功`);
+      } catch (error) {
+        console.log(`⚠️ 创建表 ${table.name} 失败，可能已存在:`, error.message);
       }
     }
     
-    console.log('✅ Turso数据库迁移完成');
+    // 插入初始数据
+    try {
+      await tursoClient.execute(`
+        INSERT OR IGNORE INTO geographic_levels (level, name, radius_km, delay_minutes, required_infected) VALUES
+        (1, '本小区', 0.5, 0, 1),
+        (2, '临近小区', 1.5, 10, 20),
+        (3, '所属街道', 3.0, 45, 50),
+        (4, '行政区/城市', 10.0, 180, 100)
+      `);
+      console.log('✅ 插入初始数据成功');
+    } catch (error) {
+      console.log('⚠️ 插入初始数据失败:', error.message);
+    }
+    
+    console.log('✅ 简化数据库迁移完成');
   } catch (error) {
-    console.error('❌ 数据库迁移失败:', error);
+    console.error('❌ 简化数据库迁移失败:', error);
     throw error;
   }
 }

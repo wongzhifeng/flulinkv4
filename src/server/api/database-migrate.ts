@@ -1,11 +1,11 @@
 // src/server/api/database-migrate.ts
 // 数据库迁移API端点 - 基于《德道经》"无为而无不为"哲学
 
-import { runDatabaseMigrations } from '../../lib/database';
+import { runSimpleMigration } from '../../lib/database';
 
 export async function handleDatabaseMigrate(request: Request): Promise<Response> {
   try {
-    await runDatabaseMigrations();
+    await runSimpleMigration();
     
     return new Response(JSON.stringify({
       success: true,
