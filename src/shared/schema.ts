@@ -1,164 +1,99 @@
 // src/shared/schema.ts
-// 基于《德道经》"无为而治"哲学的数据库Schema设计
+// 基于《德道经》第37章"道常无为而无不为"的数据库Schema设计
 
-// 用户表 - 对应"民自化"思想
-export interface User {
-  id: string;
-  username: string;
-  email: string;
-  avatar_url?: string;
-  user_type: 'free' | 'premium' | 'super';
-  location_lat?: number;
-  location_lng?: number;
-  location_address?: string;
-  created_at: string;
-  updated_at: string;
-}
+import { sqliteTable, text, real, integer, boolean } from 'drizzle-orm/sqlite-core';
+import { sql } from 'drizzle-orm';
 
-// 毒株表 - 对应"道法自然"思想
-export interface VirusStrain {
-  id: string;
-  content: string;
-  author_id: string;
-  strain_type: 'life' | 'opinion' | 'interest' | 'super';
-  tags: string[]; // JSON数组
-  susceptible_tags: string[]; // JSON数组
-  location_lat?: number;
-  location_lng?: number;
-  location_address?: string;
-  is_super_flu: boolean;
-  is_dormant: boolean;
-  dormant_until?: string;
-  created_at: string;
-  expires_at: string;
-}
+// 用户表 - 对应《德道经》"修之于身，其德乃真"
+export const users = sqliteTable('users', {
+  id: text('id').primaryKey(),
+  username: text('username').notNull(),
+  email: text('email').unique().notNull(),
+  avatarUrl: text('avatar_url'),
+  userType: text('user_type').notNull().default('free'), // free, premium, enterprise
+  locationLat: real('location_lat'),
+  locationLng: real('location_lng'),
+  locationAddress: text('location_address'),
+  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text('updated_at').default(sql`CURRENT_TIMESTAMP`),
+});
 
-// 感染记录表 - 对应"无为而无不为"思想
-export interface InfectionRecord {
-  id: string;
-  user_id: string;
-  strain_id: string;
-  infected_at: string;
-  geographic_level: number; // 1-4级地理传播
-  source_user_id?: string;
-}
+// 毒株表 - 对应《德道经》"道生一，一生二，二生三，三生万物"
+export const virusStrains = sqliteTable('virus_strains', {
+  id: text('id').primaryKey(),
+  content: text('content').notNull(),
+  authorId: text('author_id').notNull().references(() => users.id),
+  strainType: text('strain_type').notNull().default('life'), // life, opinion, interest, super
+  tags: text('tags'), // JSON数组 - 毒株标签
+  susceptibleTags: text('susceptible_tags'), // JSON数组 - 易感人群标签
+  locationLat: real('location_lat'),
+  locationLng: real('location_lng'),
+  locationAddress: text('location_address'),
+  isSuperFlu: boolean('is_super_flu').default(false), // 是否超级流感
+  isDormant: boolean('is_dormant').default(false), // 是否休眠
+  dormantUntil: text('dormant_until'), // 休眠到期时间
+  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`),
+  expiresAt: text('expires_at').notNull(), // 7天自动解散
+});
 
-// 传播统计表 - 对应"知人者智"思想
-export interface PropagationStats {
-  strain_id: string;
-  total_infected: number;
-  infection_rate: number;
-  current_level: number;
-  last_updated: string;
-}
+// 感染记录表 - 对应《德道经》"知人者智，自知者明"
+export const infectionRecords = sqliteTable('infection_records', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id),
+  strainId: text('strain_id').notNull().references(() => virusStrains.id),
+  infectedAt: text('infected_at').default(sql`CURRENT_TIMESTAMP`),
+  geographicLevel: integer('geographic_level').notNull(), // 1-4级传播层级
+  sourceUserId: text('source_user_id').references(() => users.id), // 感染来源用户
+});
 
-// 数据库表名常量
-export const TABLES = {
-  USERS: 'users',
-  VIRUS_STRAINS: 'virus_strains',
-  INFECTION_RECORDS: 'infection_records',
-  PROPAGATION_STATS: 'propagation_stats'
-} as const;
+// 传播统计表 - 对应《德道经》"无为而无不为"
+export const propagationStats = sqliteTable('propagation_stats', {
+  strainId: text('strain_id').primaryKey().references(() => virusStrains.id),
+  totalInfected: integer('total_infected').default(0), // 总感染人数
+  infectionRate: real('infection_rate').default(0), // 感染率
+  currentLevel: integer('current_level').default(1), // 当前传播层级
+  lastUpdated: text('last_updated').default(sql`CURRENT_TIMESTAMP`),
+});
 
-// SQL创建表语句
-export const CREATE_TABLES_SQL = {
-  USERS: `
-    CREATE TABLE IF NOT EXISTS users (
-      id TEXT PRIMARY KEY,
-      username TEXT NOT NULL,
-      email TEXT UNIQUE NOT NULL,
-      avatar_url TEXT,
-      user_type TEXT NOT NULL DEFAULT 'free',
-      location_lat REAL,
-      location_lng REAL,
-      location_address TEXT,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `,
-  
-  VIRUS_STRAINS: `
-    CREATE TABLE IF NOT EXISTS virus_strains (
-      id TEXT PRIMARY KEY,
-      content TEXT NOT NULL,
-      author_id TEXT NOT NULL,
-      strain_type TEXT NOT NULL DEFAULT 'life',
-      tags TEXT, -- JSON数组
-      susceptible_tags TEXT, -- JSON数组
-      location_lat REAL,
-      location_lng REAL,
-      location_address TEXT,
-      is_super_flu BOOLEAN DEFAULT FALSE,
-      is_dormant BOOLEAN DEFAULT FALSE,
-      dormant_until DATETIME,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      expires_at DATETIME NOT NULL,
-      FOREIGN KEY (author_id) REFERENCES users(id)
-    )
-  `,
-  
-  INFECTION_RECORDS: `
-    CREATE TABLE IF NOT EXISTS infection_records (
-      id TEXT PRIMARY KEY,
-      user_id TEXT NOT NULL,
-      strain_id TEXT NOT NULL,
-      infected_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      geographic_level INTEGER NOT NULL,
-      source_user_id TEXT,
-      FOREIGN KEY (user_id) REFERENCES users(id),
-      FOREIGN KEY (strain_id) REFERENCES virus_strains(id),
-      FOREIGN KEY (source_user_id) REFERENCES users(id)
-    )
-  `,
-  
-  PROPAGATION_STATS: `
-    CREATE TABLE IF NOT EXISTS propagation_stats (
-      strain_id TEXT PRIMARY KEY,
-      total_infected INTEGER DEFAULT 0,
-      infection_rate REAL DEFAULT 0,
-      current_level INTEGER DEFAULT 1,
-      last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (strain_id) REFERENCES virus_strains(id)
-    )
-  `
-} as const;
+// 地理传播层级表 - 对应《德道经》"修之于家，其德乃余；修之于国，其德乃丰"
+export const geographicLevels = sqliteTable('geographic_levels', {
+  id: integer('id').primaryKey(),
+  level: integer('level').notNull(), // 1-4级
+  name: text('name').notNull(), // 本小区、临近小区、街道、行政区
+  radiusKm: real('radius_km').notNull(), // 传播半径（公里）
+  delayMinutes: integer('delay_minutes').notNull(), // 传播延迟（分钟）
+  requiredInfected: integer('required_infected').notNull(), // 解锁所需感染人数
+  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`),
+});
 
-// 数据库初始化函数
-export async function initializeDatabase(db: any): Promise<void> {
-  try {
-    console.log('开始初始化数据库表结构...');
-    
-    // 创建所有表
-    await db.execute(CREATE_TABLES_SQL.USERS);
-    await db.execute(CREATE_TABLES_SQL.VIRUS_STRAINS);
-    await db.execute(CREATE_TABLES_SQL.INFECTION_RECORDS);
-    await db.execute(CREATE_TABLES_SQL.PROPAGATION_STATS);
-    
-    console.log('✅ 数据库表结构初始化完成');
-  } catch (error) {
-    console.error('❌ 数据库初始化失败:', error);
-    throw error;
-  }
-}
+// 用户免疫系统表 - 对应《德道经》"知足者富"
+export const userImmunity = sqliteTable('user_immunity', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id),
+  strainType: text('strain_type').notNull(), // 免疫的毒株类型
+  immunityLevel: integer('immunity_level').notNull().default(1), // 免疫等级 1-5
+  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`),
+  expiresAt: text('expires_at'), // 免疫到期时间
+});
 
-// 数据验证函数
-export function validateUser(user: Partial<User>): boolean {
-  return !!(user.username && user.email);
-}
+// 传播路径表 - 对应《德道经》"道法自然"
+export const propagationPaths = sqliteTable('propagation_paths', {
+  id: text('id').primaryKey(),
+  strainId: text('strain_id').notNull().references(() => virusStrains.id),
+  fromUserId: text('from_user_id').notNull().references(() => users.id),
+  toUserId: text('to_user_id').notNull().references(() => users.id),
+  geographicLevel: integer('geographic_level').notNull(),
+  propagationTime: text('propagation_time').notNull(),
+  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`),
+});
 
-export function validateVirusStrain(strain: Partial<VirusStrain>): boolean {
-  return !!(strain.content && strain.author_id && strain.strain_type);
-}
-
-export function validateInfectionRecord(record: Partial<InfectionRecord>): boolean {
-  return !!(record.user_id && record.strain_id && record.geographic_level);
-}
-
-export default {
-  TABLES,
-  CREATE_TABLES_SQL,
-  initializeDatabase,
-  validateUser,
-  validateVirusStrain,
-  validateInfectionRecord
+// 导出所有表定义
+export const schema = {
+  users,
+  virusStrains,
+  infectionRecords,
+  propagationStats,
+  geographicLevels,
+  userImmunity,
+  propagationPaths,
 };

@@ -1,6 +1,30 @@
 // src/lib/database.ts
 // 基于《德道经》第37章"道常无为而无不为"的数据库连接配置
 
+import { createClient } from '@libsql/client';
+import { drizzle } from 'drizzle-orm/libsql';
+
+// 创建Turso客户端 - 对应"道常无为而无不为"
+const createTursoClient = () => {
+  const url = process.env.TURSO_DATABASE_URL;
+  const authToken = process.env.TURSO_AUTH_TOKEN;
+  
+  if (!url) {
+    console.warn('⚠️ TURSO_DATABASE_URL未配置，使用模拟数据库');
+    return null;
+  }
+  
+  console.log('🌍 连接Turso边缘数据库:', url);
+  return createClient({
+    url,
+    authToken,
+  });
+};
+
+// 初始化数据库连接
+const tursoClient = createTursoClient();
+export const db = tursoClient ? drizzle(tursoClient) : null;
+
 // 增强的模拟数据库服务 - 支持Turso兼容的API
 class EnhancedDatabase {
   private static instance: EnhancedDatabase;
@@ -136,31 +160,37 @@ class EnhancedDatabase {
 }
 
 // 根据环境选择数据库
-const useRealDatabase = process.env.NODE_ENV === 'production' && process.env.DATABASE_URL;
+const useRealDatabase = process.env.NODE_ENV === 'production' && process.env.TURSO_DATABASE_URL;
 
-let db: EnhancedDatabase;
+let mockDb: EnhancedDatabase;
 
 if (useRealDatabase) {
-  // 生产环境使用LibSQL服务
-  console.log('Using LibSQL database:', process.env.DATABASE_URL);
-  // TODO: 实现真实LibSQL连接
-  // 当前LibSQL服务地址: libsql://flulink-db-k8m2.zeabur.app
-  db = new EnhancedDatabase();
+  // 生产环境使用Turso数据库
+  console.log('🌍 使用Turso边缘数据库');
+  mockDb = new EnhancedDatabase(); // 备用模拟数据库
 } else {
   // 开发环境使用模拟数据库
-  console.log('Using mock database for development');
-  db = new EnhancedDatabase();
+  console.log('🔧 使用模拟数据库进行开发');
+  mockDb = new EnhancedDatabase();
 }
 
 // 导出数据库实例
-export { db };
+export { mockDb };
 
 // 数据库连接测试 - 对应《德道经》"知人者智"
 export async function testDatabaseConnection(): Promise<boolean> {
   try {
-    await db.execute('SELECT 1');
-    console.log('✅ 数据库连接成功');
-    return true;
+    if (db) {
+      // 测试Turso连接
+      await db.execute('SELECT 1');
+      console.log('✅ Turso数据库连接成功');
+      return true;
+    } else {
+      // 测试模拟数据库
+      await mockDb.execute('SELECT 1');
+      console.log('✅ 模拟数据库连接成功');
+      return true;
+    }
   } catch (error) {
     console.error('❌ 数据库连接失败:', error);
     return false;
@@ -177,4 +207,5 @@ export async function syncDatabase(): Promise<void> {
   }
 }
 
-export default db;
+// 导出默认数据库实例（优先使用Turso，否则使用模拟数据库）
+export default db || mockDb;
