@@ -200,13 +200,54 @@ const server = serve({
       }
     }
     
+    // 数据库表检查API - 调试用
+    if (url.pathname === '/api/debug/tables') {
+      try {
+        const { tursoClient } = await import('./lib/database');
+        if (tursoClient) {
+          const result = await tursoClient.execute(`
+            SELECT name FROM sqlite_master WHERE type='table' ORDER BY name
+          `);
+          
+          return new Response(JSON.stringify({
+            success: true,
+            message: '数据库表列表',
+            tables: result.rows.map(row => row.name),
+            timestamp: new Date().toISOString(),
+          }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        } else {
+          return new Response(JSON.stringify({
+            success: false,
+            message: 'Turso客户端未初始化',
+            timestamp: new Date().toISOString(),
+          }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        }
+      } catch (error) {
+        return new Response(JSON.stringify({
+          success: false,
+          message: '检查数据库表失败',
+          error: error instanceof Error ? error.message : '未知错误',
+          timestamp: new Date().toISOString(),
+        }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+    }
+    
     // 临时测试API - 验证代码更新
     if (url.pathname === '/api/test-update') {
       return new Response(JSON.stringify({
         success: true,
         message: '代码更新成功，API路由正常工作',
         timestamp: new Date().toISOString(),
-        version: '2025-01-12-v2'
+        version: '2025-01-12-v3'
       }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' }
