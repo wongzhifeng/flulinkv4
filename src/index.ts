@@ -55,6 +55,52 @@ const server = serve({
       });
     }
     
+    // 数据库测试API - 对应《德道经》"知人者智"
+    if (url.pathname === '/api/database-test') {
+      try {
+        const { testDatabaseConnection, syncDatabase } = await import('./lib/database');
+        
+        if (request.method === 'GET') {
+          const isConnected = await testDatabaseConnection();
+          
+          return new Response(JSON.stringify({
+            success: true,
+            message: '数据库连接测试完成',
+            connected: isConnected,
+            database: process.env.TURSO_DATABASE_URL ? 'Turso' : 'Mock',
+            timestamp: new Date().toISOString(),
+          }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        }
+        
+        if (request.method === 'POST') {
+          await syncDatabase();
+          
+          return new Response(JSON.stringify({
+            success: true,
+            message: '数据库同步测试完成',
+            timestamp: new Date().toISOString(),
+          }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        }
+      } catch (error) {
+        console.error('数据库测试失败:', error);
+        return new Response(JSON.stringify({
+          success: false,
+          message: '数据库测试失败',
+          error: error instanceof Error ? error.message : '未知错误',
+          timestamp: new Date().toISOString(),
+        }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+    }
+    
     // 毒株API - 实现完整的CRUD操作
     if (url.pathname === '/api/strains') {
       if (request.method === 'GET') {
