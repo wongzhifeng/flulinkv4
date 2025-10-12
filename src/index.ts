@@ -3,6 +3,7 @@
 
 import { serve } from 'bun';
 import { GeographicPropagationAPI } from './server/services/GeographicPropagationAPI';
+import { runDatabaseMigrations } from './lib/database';
 
 // 模拟数据存储 - 实际部署时将替换为Turso数据库
 const mockStrains = [
@@ -37,6 +38,14 @@ const mockStrains = [
 
 // 初始化地理传播算法API
 const propagationAPI = new GeographicPropagationAPI();
+
+// 自动执行数据库迁移 - 对应《德道经》"无为而无不为"
+console.log('🚀 FluLink应用启动中...');
+runDatabaseMigrations().then(() => {
+  console.log('✅ 数据库迁移完成，应用准备就绪');
+}).catch((error) => {
+  console.error('❌ 数据库迁移失败:', error);
+});
 
 const server = serve({
   port: process.env.PORT || 8080,
@@ -92,6 +101,34 @@ const server = serve({
         return new Response(JSON.stringify({
           success: false,
           message: '数据库测试失败',
+          error: error instanceof Error ? error.message : '未知错误',
+          timestamp: new Date().toISOString(),
+        }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+    }
+    
+    // 数据库迁移API - 对应《德道经》"无为而无不为"
+    if (url.pathname === '/api/database-migrate') {
+      try {
+        await runDatabaseMigrations();
+        
+        return new Response(JSON.stringify({
+          success: true,
+          message: '数据库迁移执行完成',
+          database: process.env.TURSO_DATABASE_URL ? 'Turso' : 'Mock',
+          timestamp: new Date().toISOString(),
+        }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      } catch (error) {
+        console.error('数据库迁移失败:', error);
+        return new Response(JSON.stringify({
+          success: false,
+          message: '数据库迁移失败',
           error: error instanceof Error ? error.message : '未知错误',
           timestamp: new Date().toISOString(),
         }), {
