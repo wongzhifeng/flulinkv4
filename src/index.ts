@@ -343,6 +343,19 @@ const server = serve({
       }
     }
     
+    // 简单监控API测试
+    if (url.pathname === '/api/monitoring/simple') {
+      return new Response(JSON.stringify({
+        success: true,
+        message: '监控API路由正常工作',
+        timestamp: new Date().toISOString(),
+        version: '2025-01-12-v4'
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    
     // 监控API路由 - 对应《德道经》"知人者智，自知者明"
     if (url.pathname.startsWith('/api/monitoring/')) {
       try {
