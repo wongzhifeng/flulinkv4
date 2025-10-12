@@ -1,7 +1,7 @@
 // src/shared/schema.ts
 // 基于《德道经》第37章"道常无为而无不为"的数据库Schema设计
 
-import { sqliteTable, text, real, integer, boolean } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, real, integer } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
 
 // 用户表 - 对应《德道经》"修之于身，其德乃真"
@@ -29,8 +29,8 @@ export const virusStrains = sqliteTable('virus_strains', {
   locationLat: real('location_lat'),
   locationLng: real('location_lng'),
   locationAddress: text('location_address'),
-  isSuperFlu: boolean('is_super_flu').default(false), // 是否超级流感
-  isDormant: boolean('is_dormant').default(false), // 是否休眠
+  isSuperFlu: integer('is_super_flu').default(0), // 是否超级流感 (0=false, 1=true)
+  isDormant: integer('is_dormant').default(0), // 是否休眠 (0=false, 1=true)
   dormantUntil: text('dormant_until'), // 休眠到期时间
   createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`),
   expiresAt: text('expires_at').notNull(), // 7天自动解散
