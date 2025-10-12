@@ -113,22 +113,13 @@ const server = serve({
     // 数据库迁移API - 对应《德道经》"无为而无不为"
     if (url.pathname === '/api/database-migrate') {
       try {
-        await runDatabaseMigrations();
-        
-        return new Response(JSON.stringify({
-          success: true,
-          message: '数据库迁移执行完成',
-          database: process.env.TURSO_DATABASE_URL ? 'Turso' : 'Mock',
-          timestamp: new Date().toISOString(),
-        }), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' }
-        });
+        const { handleDatabaseMigrate } = await import('./server/api/database-migrate');
+        return await handleDatabaseMigrate(request);
       } catch (error) {
-        console.error('数据库迁移失败:', error);
+        console.error('数据库迁移API加载失败:', error);
         return new Response(JSON.stringify({
           success: false,
-          message: '数据库迁移失败',
+          message: '数据库迁移API加载失败',
           error: error instanceof Error ? error.message : '未知错误',
           timestamp: new Date().toISOString(),
         }), {
