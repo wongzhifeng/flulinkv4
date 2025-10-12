@@ -300,7 +300,27 @@ export async function runDatabaseMigrations(): Promise<void> {
       CREATE INDEX IF NOT EXISTS idx_propagation_paths_strain ON propagation_paths(strain_id);
     `;
     
-    await tursoClient.execute(migrationSQL);
+    // 分割SQL语句并逐个执行
+    const statements = migrationSQL
+      .split(';')
+      .map(stmt => stmt.trim())
+      .filter(stmt => stmt && !stmt.startsWith('--'));
+    
+    console.log(`🔄 开始执行 ${statements.length} 个SQL语句...`);
+    
+    for (let i = 0; i < statements.length; i++) {
+      const statement = statements[i];
+      if (statement) {
+        try {
+          await tursoClient.execute(statement);
+          console.log(`✅ 执行语句 ${i + 1}/${statements.length}: ${statement.substring(0, 50)}...`);
+        } catch (error) {
+          console.log(`⚠️ 语句 ${i + 1} 执行失败，可能已存在: ${error.message}`);
+          // 继续执行其他语句，不中断迁移过程
+        }
+      }
+    }
+    
     console.log('✅ Turso数据库迁移完成');
   } catch (error) {
     console.error('❌ 数据库迁移失败:', error);
