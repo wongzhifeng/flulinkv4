@@ -192,19 +192,20 @@ export async function runDatabaseMigrations(): Promise<void> {
     
     // 读取迁移文件并执行
     const migrationSQL = `
-      -- 用户表
-      CREATE TABLE IF NOT EXISTS users (
-        id TEXT PRIMARY KEY,
-        username TEXT NOT NULL,
-        email TEXT UNIQUE NOT NULL,
-        avatar_url TEXT,
-        user_type TEXT NOT NULL DEFAULT 'free',
-        location_lat REAL,
-        location_lng REAL,
-        location_address TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      );
+        -- 用户表
+        CREATE TABLE IF NOT EXISTS users (
+          id TEXT PRIMARY KEY,
+          username TEXT NOT NULL UNIQUE,
+          email TEXT UNIQUE NOT NULL,
+          password_hash TEXT NOT NULL,
+          avatar_url TEXT,
+          user_type TEXT NOT NULL DEFAULT 'free',
+          location_lat REAL,
+          location_lng REAL,
+          location_address TEXT,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
 
       -- 毒株表
       CREATE TABLE IF NOT EXISTS virus_strains (

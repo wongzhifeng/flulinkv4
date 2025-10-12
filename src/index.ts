@@ -129,6 +129,77 @@ const server = serve({
       }
     }
     
+    // 认证API路由 - 对应《德道经》"修之于身，其德乃真"
+    if (url.pathname.startsWith('/api/auth/')) {
+      try {
+        const { 
+          handleRegister, 
+          handleLogin, 
+          handleLogout, 
+          handleGetProfile, 
+          handleUpdateProfile,
+          handleRefreshToken,
+          handleAuthHealth
+        } = await import('./server/api/auth');
+        
+        // 用户注册
+        if (url.pathname === '/api/auth/register' && request.method === 'POST') {
+          return await handleRegister(request);
+        }
+        
+        // 用户登录
+        if (url.pathname === '/api/auth/login' && request.method === 'POST') {
+          return await handleLogin(request);
+        }
+        
+        // 用户登出
+        if (url.pathname === '/api/auth/logout' && request.method === 'POST') {
+          return await handleLogout(request);
+        }
+        
+        // 获取用户信息
+        if (url.pathname === '/api/auth/profile' && request.method === 'GET') {
+          return await handleGetProfile(request);
+        }
+        
+        // 更新用户信息
+        if (url.pathname === '/api/auth/profile' && request.method === 'PUT') {
+          return await handleUpdateProfile(request);
+        }
+        
+        // 令牌刷新
+        if (url.pathname === '/api/auth/refresh' && request.method === 'POST') {
+          return await handleRefreshToken(request);
+        }
+        
+        // 认证服务健康检查
+        if (url.pathname === '/api/auth/health' && request.method === 'GET') {
+          return await handleAuthHealth(request);
+        }
+        
+        // 未找到的认证端点
+        return new Response(JSON.stringify({
+          success: false,
+          message: '认证API端点不存在',
+          timestamp: new Date().toISOString(),
+        }), {
+          status: 404,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      } catch (error) {
+        console.error('认证API加载失败:', error);
+        return new Response(JSON.stringify({
+          success: false,
+          message: '认证API加载失败',
+          error: error instanceof Error ? error.message : '未知错误',
+          timestamp: new Date().toISOString(),
+        }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+    }
+    
     // 临时测试API - 验证代码更新
     if (url.pathname === '/api/test-update') {
       return new Response(JSON.stringify({
