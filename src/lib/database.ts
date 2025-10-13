@@ -282,6 +282,46 @@ export async function runSimpleMigration(): Promise<void> {
           propagation_time TEXT NOT NULL,
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )`
+      },
+      {
+        name: 'monitoring_metrics',
+        sql: `CREATE TABLE IF NOT EXISTS monitoring_metrics (
+          id TEXT PRIMARY KEY,
+          type TEXT NOT NULL,
+          metric TEXT NOT NULL,
+          value REAL NOT NULL,
+          timestamp INTEGER NOT NULL,
+          metadata TEXT,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`
+      },
+      {
+        name: 'error_logs',
+        sql: `CREATE TABLE IF NOT EXISTS error_logs (
+          id TEXT PRIMARY KEY,
+          level TEXT NOT NULL,
+          message TEXT NOT NULL,
+          stack TEXT,
+          url TEXT,
+          user_id TEXT,
+          metadata TEXT,
+          resolved INTEGER NOT NULL DEFAULT 0,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          resolved_at DATETIME
+        )`
+      },
+      {
+        name: 'user_sessions',
+        sql: `CREATE TABLE IF NOT EXISTS user_sessions (
+          id TEXT PRIMARY KEY,
+          user_id TEXT NOT NULL,
+          session_token TEXT NOT NULL UNIQUE,
+          ip_address TEXT,
+          user_agent TEXT,
+          last_activity DATETIME NOT NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          expires_at DATETIME NOT NULL
+        )`
       }
     ];
     
