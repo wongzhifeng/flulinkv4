@@ -1,0 +1,31 @@
+# FluLink 星尘共鸣版 v4.0 - AI 服务配置
+
+# AI 服务依赖
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+sentence-transformers==2.2.2
+chromadb==0.4.15
+numpy==1.24.3
+scikit-learn==1.3.2
+openai==1.3.0
+pydantic==2.5.0
+python-multipart==0.0.6
+aiofiles==23.2.1
+httpx==0.25.2
+
+# 向量数据库配置
+VECTOR_CONFIG = {
+    "user_interest_dim": 768,      # 用户兴趣向量维度
+    "content_semantic_dim": 768,   # 内容语义向量维度  
+    "cluster_feature_dim": 512,    # 星团特征向量维度
+    "distance_metric": "cosine",  # 相似度计算方式
+    "index_type": "HNSW"          # 高效近邻搜索
+}
+
+# 模型配置
+MODEL_CONFIG = {
+    "embedding_model": "all-MiniLM-L6-v2",
+    "max_sequence_length": 512,
+    "batch_size": 32,
+    "cache_dir": "/app/models"
+}

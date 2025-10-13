@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FluLink - 病毒库</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0a0a1a;
+            --bg-secondary: #1a1a2e;
+            --bg-card: #16213e;
+            --text-primary: #eaeaea;
+            --text-secondary: #a8a8a8;
+            --accent-gold: #ffd700;
+            --accent-1: #e94560;
+            --accent-2: #533483;
+            --accent-3: #00adb5;
+            --neumorphism-light: rgba(255, 255, 255, 0.05);
+            --neumorphism-dark: rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .neumorphism {
+            background: linear-gradient(145deg, #1e2a45, #0d1b2a);
+            box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.3), 
+                        -8px -8px 16px rgba(255, 255, 255, 0.05);
+        }
+
+        .neumorphism-inset {
+            background: linear-gradient(145deg, #0d1b2a, #1e2a45);
+            box-shadow: inset 8px 8px 16px rgba(0, 0, 0, 0.3), 
+                        inset -8px -8px 16px rgba(255, 255, 255, 0.05);
+        }
+
+        .gradient-gold {
+            background: linear-gradient(135deg, var(--accent-gold), #ffaa00);
+        }
+
+        .gradient-text-gold {
+            background: linear-gradient(135deg, var(--accent-gold), #ffaa00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .glass-effect {
+            background: rgba(26, 26, 46, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .virus-card {
+            background: linear-gradient(145deg, #1e2a45, #0d1b2a);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.3), 
+                        -8px -8px 16px rgba(255, 255, 255, 0.05);
+        }
+
+        .virus-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 12px 12px 20px rgba(0, 0, 0, 0.4), 
+                        -12px -12px 20px rgba(255, 255, 255, 0.07);
+        }
+
+        .virus-header {
+            position: relative;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                rgba(233, 69, 96, 0.8) 0%, 
+                rgba(83, 52, 131, 0.6) 50%, 
+                rgba(0, 173, 181, 0.4) 100%);
+        }
+
+        .virus-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 30%;
+            background: rgba(255, 255, 255, 0.3);
+            filter: blur(10px);
+            animation: virusPulse 3s infinite;
+        }
+
+        @keyframes virusPulse {
+            0% { left: -30%; }
+            100% { left: 100%; }
+        }
+
+        .infection-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--accent-gold);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .action-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #1e2a45, #0d1b2a);
+            box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3), 
+                        -3px -3px 6px rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
+        }
+
+        .action-button:hover {
+            transform: scale(1.1);
+        }
+
+        .action-button.active {
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            color: white;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 26, 0.9);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 20;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 0;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item.active {
+            color: var(--accent-gold);
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .nav-item span {
+            font-size: 10px;
+        }
+
+        .filter-chip {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .filter-chip.active {
+            background: linear-gradient(135deg, var(--accent-gold), #ffaa00);
+            color: var(--bg-primary);
+        }
+
+        .heat-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .heat-high {
+            background: rgba(233, 69, 96, 0.2);
+            color: var(--accent-1);
+            box-shadow: 0 0 10px rgba(233, 69, 96, 0.3);
+        }
+
+        .heat-medium {
+            background: rgba(83, 52, 131, 0.2);
+            color: var(--accent-2);
+            box-shadow: 0 0 10px rgba(83, 52, 131, 0.3);
+        }
+
+        .heat-low {
+            background: rgba(0, 173, 181, 0.2);
+            color: var(--accent-3);
+            box-shadow: 0 0 10px rgba(0, 173, 181, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="max-w-md mx-auto bg-gray-900 min-h-screen relative pb-16">
+        <!-- 顶部导航栏 -->
+        <header class="glass-effect sticky top-0 z-20 px-4 py-3">
+            <div class="flex items-center justify-between">
+                <h1 class="text-xl font-bold gradient-text-gold">病毒库</h1>
+                <div class="flex items-center space-x-4">
+                    <button class="text-gray-400 hover:text-white transition">
+                        <i class="fas fa-bell text-lg"></i>
+                        <span class="absolute -mt-6 -mr-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                    <button class="text-gray-400 hover:text-white transition">
+                        <i class="fas fa-filter text-lg"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 筛选标签 -->
+            <div class="flex overflow-x-auto mt-3 pb-2">
+                <div class="filter-chip active">全部</div>
+                <div class="filter-chip">仅本小区</div>
+                <div class="filter-chip">热门毒株</div>
+                <div class="filter-chip">最新发布</div>
+            </div>
+        </header>
+
+        <!-- 主内容区 - 病毒卡片流 -->
+        <main class="px-4 py-2 space-y-4">
+            <!-- 病毒卡片 1 -->
+            <div class="virus-card">
+                <div class="virus-header"></div>
+                <div class="p-4 relative">
+                    <div class="heat-indicator heat-high">98°</div>
+                    <div class="flex items-center mb-3">
+                        <img src="https://picsum.photos/seed/user1/40/40.jpg" alt="用户头像" class="w-10 h-10 rounded-full mr-3">
+                        <div class="flex-1">
+                            <div class="flex items-center">
+                                <h3 class="font-semibold">张小明</h3>
+                                <span class="ml-2 px-2 py-1 rounded-full text-xs bg-red-500 bg-opacity-20 text-red-400">Alpha</span>
+                            </div>
+                            <p class="text-xs text-gray-400">2小时前 · 朝阳区</p>
+                        </div>
+                    </div>
+                    
+                    <p class="mb-3 text-sm">刚发现一家超赞的咖啡馆！环境超棒，咖啡香醇，最重要的是老板人超好。强烈推荐给大家！#咖啡探店 #周末好去处</p>
+                    
+                    <img src="https://picsum.photos/seed/coffee/400/200.jpg" alt="咖啡店" class="w-full h-48 object-cover rounded-lg mb-3">
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex space-x-3">
+                            <button class="action-button">
+                                <i class="far fa-heart"></i>
+                            </button>
+                            <button class="action-button">
+                                <i class="far fa-comment"></i>
+                            </button>
+                            <button class="action-button infect-btn" data-strain-id="strain_001">
+                                <i class="fas fa-virus"></i>
+                            </button>
+                        </div>
+                        <div class="infection-tag">
+                            <i class="fas fa-virus mr-1"></i>
+                            <span class="infect-count" data-for="strain_001">已感染 128 人</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 病毒卡片 2 -->
+            <div class="virus-card">
+                <div class="virus-header"></div>
+                <div class="p-4 relative">
+                    <div class="heat-indicator heat-medium">76°</div>
+                    <div class="flex items-center mb-3">
+                        <img src="https://picsum.photos/seed/user2/40/40.jpg" alt="用户头像" class="w-10 h-10 rounded-full mr-3">
+                        <div class="flex-1">
+                            <div class="flex items-center">
+                                <h3 class="font-semibold">李小红</h3>
+                                <span class="ml-2 px-2 py-1 rounded-full text-xs bg-purple-500 bg-opacity-20 text-purple-400">Beta</span>
+                            </div>
+                            <p class="text-xs text-gray-400">5小时前 · 海淀区</p>
+                        </div>
+                    </div>
+                    
+                    <p class="mb-3 text-sm">今天去看了《流浪地球2》，特效真的太震撼了！剧情也很紧凑，全程无尿点。中国科幻电影的里程碑之作！#电影推荐 #流浪地球2</p>
+                    
+                    <img src="https://picsum.photos/seed/movie/400/200.jpg" alt="电影海报" class="w-full h-48 object-cover rounded-lg mb-3">
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex space-x-3">
+                            <button class="action-button active">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                            <button class="action-button">
+                                <i class="far fa-comment"></i>
+                            </button>
+                            <button class="action-button infect-btn" data-strain-id="strain_002">
+                                <i class="fas fa-virus"></i>
+                            </button>
+                        </div>
+                        <div class="infection-tag">
+                            <i class="fas fa-virus mr-1"></i>
+                            <span class="infect-count" data-for="strain_002">已感染 89 人</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 病毒卡片 3 -->
+            <div class="virus-card">
+                <div class="virus-header"></div>
+                <div class="p-4 relative">
+                    <div class="heat-indicator heat-low">45°</div>
+                    <div class="flex items-center mb-3">
+                        <img src="https://picsum.photos/seed/user3/40/40.jpg" alt="用户头像" class="w-10 h-10 rounded-full mr-3">
+                        <div class="flex-1">
+                            <div class="flex items-center">
+                                <h3 class="font-semibold">王大伟</h3>
+                                <span class="ml-2 px-2 py-1 rounded-full text-xs bg-cyan-500 bg-opacity-20 text-cyan-400">Gamma</span>
+                            </div>
+                            <p class="text-xs text-gray-400">1天前 · 西城区</p>
+                        </div>
+                    </div>
+                    
+                    <p class="mb-3 text-sm">分享一个超实用的Python学习资源！从入门到进阶，内容全面，讲解清晰。我已经学完基础部分，感觉收获很大。#编程学习 #Python</p>
+                    
+                    <div class="bg-gray-800 rounded-lg p-4 mb-3">
+                        <div class="flex items-center mb-2">
+                            <i class="fab fa-python text-2xl text-blue-400 mr-2"></i>
+                            <h4 class="font-semibold">Python学习路线图</h4>
+                        </div>
+                        <p class="text-sm text-gray-400">www.pythonlearning.com</p>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex space-x-3">
+                            <button class="action-button">
+                                <i class="far fa-heart"></i>
+                            </button>
+                            <button class="action-button">
+                                <i class="far fa-comment"></i>
+                            </button>
+                            <button class="action-button infect-btn" data-strain-id="strain_003">
+                                <i class="fas fa-virus"></i>
+                            </button>
+                        </div>
+                        <div class="infection-tag">
+                            <i class="fas fa-virus mr-1"></i>
+                            <span class="infect-count" data-for="strain_003">已感染 42 人</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 底部导航栏 -->
+        <nav class="bottom-nav">
+            <div class="max-w-md mx-auto flex justify-around items-center">
+                <a class="nav-item active" aria-current="page" href="/index.html">
+                    <i class="fas fa-virus"></i>
+                    <span>病毒库</span>
+                </a>
+                <a class="nav-item text-gray-400" href="/spread-map.html">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>图谱</span>
+                </a>
+                <a class="nav-item text-gray-400" href="/create-strain.html">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>发布</span>
+                </a>
+                <a class="nav-item text-gray-400" href="/immunity-profile.html">
+                    <i class="fas fa-user-circle"></i>
+                    <span>档案</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 筛选标签切换
+            const filterChips = document.querySelectorAll('.filter-chip');
+            filterChips.forEach(chip => {
+                chip.addEventListener('click', function() {
+                    filterChips.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // 点赞功能
+            const likeButtons = document.querySelectorAll('.action-button');
+            likeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const icon = this.querySelector('i');
+                    if (icon.classList.contains('fa-heart')) {
+                        if (icon.classList.contains('far')) {
+                            icon.classList.remove('far');
+                            icon.classList.add('fas');
+                            this.classList.add('active');
+                        } else {
+                            icon.classList.remove('fas');
+                            icon.classList.add('far');
+                            this.classList.remove('active');
+                        }
+                    }
+                });
+            });
+
+            // 底部导航切换
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    navItems.forEach(i => i.classList.remove('active'));
+                    i.classList.add('text-gray-400');
+                    this.classList.add('active');
+                    this.classList.remove('text-gray-400');
+                });
+            });
+
+            // 感染按钮
+            const infectButtons = document.querySelectorAll('.infect-btn');
+            infectButtons.forEach(btn => {
+              btn.addEventListener('click', async function() {
+                const strainId = this.getAttribute('data-strain-id');
+                if (!strainId) return;
+                try {
+                  this.classList.add('active');
+                  const res = await fetch(`/api/strains/${strainId}/infect`, { method: 'POST' });
+                  const json = await res.json();
+                  if (!res.ok || !json.success) throw new Error(json.message || '感染失败');
+                  const countEl = document.querySelector(`.infect-count[data-for="${strainId}"]`);
+                  if (countEl) {
+                    const newCount = json.data.infectionCount || 0;
+                    countEl.textContent = `已感染 ${newCount} 人`;
+                  }
+                } catch (err) {
+                  alert('感染失败：' + (err && err.message ? err.message : '未知错误'));
+                } finally {
+                  this.classList.remove('active');
+                }
+              });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,38 +1,41 @@
 {
-  "name": "flulink",
-  "version": "1.0.0",
-  "description": "基于《德道经》哲学的分布式流感式社交网络",
+  "name": "flulink-stardust-v4",
+  "version": "4.0.0",
+  "description": "FluLink 星尘共鸣版 - AI-Native 智能架构",
   "type": "module",
   "scripts": {
-    "dev": "bun run --hot src/index.ts",
-    "build": "bun build src/index.ts --outdir dist --target bun",
-    "start": "bun run src/index.ts",
-    "check:philosophy": "bun run scripts/check-philosophy.ts",
-    "check:performance": "bun run scripts/check-performance.ts",
-    "check:edge": "bun run scripts/check-edge.ts",
-    "check:all": "bun run check:philosophy && bun run check:performance && bun run check:edge",
-    "test": "bun test",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio",
-    "deploy:zeabur": "zeabur deploy",
-    "health": "curl http://localhost:3000/api/health"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "pocketbase": "pocketbase serve --http=0.0.0.0:8090",
+    "ai-service": "cd ai-service && python -m uvicorn main:app --host 0.0.0.0 --port 8000",
+    "setup": "npm run setup:pocketbase && npm run setup:ai",
+    "setup:pocketbase": "pocketbase migrate",
+    "setup:ai": "cd ai-service && pip install -r requirements.txt"
   },
   "dependencies": {
-    "solid-js": "^1.8.0",
-    "@libsql/client": "^0.9.0",
-    "drizzle-orm": "^0.29.0",
-    "jsonwebtoken": "^9.0.2",
-    "bcryptjs": "^2.4.3",
-    "zod": "^3.22.4",
-    "nanoid": "^5.0.4"
+    "next": "^15.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "pocketbase": "^0.22.0",
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "typescript": "^5.0.0",
+    "tailwindcss": "^3.4.0",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0",
+    "lucide-react": "^0.400.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0"
   },
   "devDependencies": {
-    "@types/bun": "^1.0.0",
-    "typescript": "^5.3.0",
-    "drizzle-kit": "^0.20.0"
+    "eslint": "^8.0.0",
+    "eslint-config-next": "^15.0.0"
   },
   "engines": {
-    "bun": ">=1.0.0"
+    "node": ">=18.0.0"
   }
 }

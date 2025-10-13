@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FluLink - 传播图谱</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0a0a1a;
+            --bg-secondary: #1a1a2e;
+            --bg-card: #16213e;
+            --text-primary: #eaeaea;
+            --text-secondary: #a8a8a8;
+            --accent-gold: #ffd700;
+            --accent-1: #e94560;
+            --accent-2: #533483;
+            --accent-3: #00adb5;
+            --neumorphism-light: rgba(255, 255, 255, 0.05);
+            --neumorphism-dark: rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .neumorphism {
+            background: linear-gradient(145deg, #1e2a45, #0d1b2a);
+            box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.3), 
+                        -8px -8px 16px rgba(255, 255, 255, 0.05);
+        }
+
+        .neumorphism-inset {
+            background: linear-gradient(145deg, #0d1b2a, #1e2a45);
+            box-shadow: inset 8px 8px 16px rgba(0, 0, 0, 0.3), 
+                        inset -8px -8px 16px rgba(255, 255, 255, 0.05);
+        }
+
+        .gradient-gold {
+            background: linear-gradient(135deg, var(--accent-gold), #ffaa00);
+        }
+
+        .gradient-text-gold {
+            background: linear-gradient(135deg, var(--accent-gold), #ffaa00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .glass-effect {
+            background: rgba(26, 26, 46, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .map-container {
+            position: relative;
+            width: 100%;
+            height: calc(100vh - 140px);
+            background: radial-gradient(ellipse at center, rgba(26, 26, 46, 0.8) 0%, rgba(10, 10, 26, 1) 100%);
+            overflow: hidden;
+        }
+
+        .district {
+            position: absolute;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .district:hover {
+            transform: scale(1.05);
+            z-index: 10;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .heat-low {
+            background: rgba(0, 173, 181, 0.3);
+            border: 1px solid rgba(0, 173, 181, 0.5);
+        }
+
+        .heat-medium {
+            background: rgba(83, 52, 131, 0.5);
+            border: 1px solid rgba(83, 52, 131, 0.7);
+        }
+
+        .heat-high {
+            background: rgba(233, 69, 96, 0.6);
+            border: 1px solid rgba(233, 69, 96, 0.8);
+        }
+
+        .heat-extreme {
+            background: rgba(255, 215, 0, 0.7);
+            border: 1px solid rgba(255, 215, 0, 0.9);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+            100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+        }
+
+        .user-location {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-gold);
+            box-shadow: 0 0 20px var(--accent-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 15;
+            animation: locationPulse 2s infinite;
+        }
+
+        @keyframes locationPulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .user-location::before {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 215, 0, 0.2);
+            animation: locationRipple 2s infinite;
+        }
+
+        @keyframes locationRipple {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        .spread-path {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-gold), rgba(255, 215, 0, 0.2));
+            transform-origin: left center;
+            z-index: 5;
+            animation: pathGlow 3s infinite;
+        }
+
+        @keyframes pathGlow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .moving-dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-1);
+            box-shadow: 0 0 10px var(--accent-1);
+            z-index: 10;
+        }
+
+        .stats-card {
+            position: absolute;
+            background: linear-gradient(145deg, #1e2a45, #0d1b2a);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 20;
+            min-width: 200px;
+            display: none;
+        }
+
+        .stats-card.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .map-control {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #1e2a45, #0d1b2a);
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3), 
+                        -5px -5px 10px rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 15;
+        }
+
+        .map-control:hover {
+            transform: scale(1.1);
+        }
+
+        .view-toggle {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            background: linear-gradient(145deg, #1e2a45, #0d1b2a);
+            border-radius: 20px;
+            padding: 4px;
+            z-index: 15;
+        }
+
+        .view-option {
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .view-option.active {
+            background: linear-gradient(135deg, var(--accent-gold), #ffaa00);
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 26, 0.9);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 20;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 0;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item.active {
+            color: var(--accent-gold);
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .nav-item span {
+            font-size: 10px;
+        }
+
+        .heat-wave {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, transparent 70%);
+            animation: heatWave 3s infinite ease-in-out;
+            pointer-events: none;
+        }
+
+        @keyframes heatWave {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .prediction-popup {
+            position: absolute;
+            background: linear-gradient(145deg, #1e2a45, #0d1b2a);
+            border-radius: 12px;
+            padding: 10px 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 20;
+            display: none;
+            max-width: 200px;
+        }
+
+        .prediction-popup.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="max-w-md mx-auto bg-gray-900 min-h-screen relative">
+        <!-- 顶部导航栏 -->
+        <header class="glass-effect sticky top-0 z-20 px-4 py-3">
+            <div class="flex items-center justify-between">
+                <h1 class="text-xl font-bold gradient-text-gold">传播图谱</h1>
+                <div class="flex items-center space-x-4">
+                    <button class="text-gray-400 hover:text-white transition">
+                        <i class="fas fa-layer-group text-lg"></i>
+                    </button>
+                    <button class="text-gray-400 hover:text-white transition">
+                        <i class="fas fa-location-arrow text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 地图容器 -->
+        <div class="map-container">
+            <!-- 视图切换 -->
+            <div class="view-toggle">
+                <div class="view-option active">热力图</div>
+                <div class="view-option">传播路径</div>
+            </div>
+
+            <!-- 热浪效果 -->
+            <div class="heat-wave" style="width: 150px; height: 150px; top: 30%; left: 60%;"></div>
+            <div class="heat-wave" style="width: 120px; height: 120px; top: 60%; left: 30%; animation-delay: 1s;"></div>
+            
+            <!-- 用户位置 -->
+            <div class="user-location" style="top: 50%; left: 50%;">
+                <i class="fas fa-user text-xs text-gray-900"></i>
+            </div>
+            
+            <!-- 区域 -->
+            <div class="district heat-low" style="width: 80px; height: 80px; top: 40%; left: 35%;" data-district="home">
+                家园
+            </div>
+            
+            <div class="district heat-medium" style="width: 100px; height: 70px; top: 25%; left: 55%;" data-district="commercial">
+                商业区
+            </div>
+            
+            <div class="district heat-high" style="width: 90px; height: 90px; top: 55%; left: 60%;" data-district="park">
+                中央公园
+            </div>
+            
+            <div class="district heat-extreme" style="width: 110px; height: 80px; top: 30%; left: 20%;" data-district="university">
+                大学城
+            </div>
+            
+            <div class="district heat-medium" style="width: 70px; height: 90px; top: 65%; left: 25%;" data-district="residential">
+                住宅区
+            </div>
+            
+            <div class="district heat-low" style="width: 80px; height: 60px; top: 15%; left: 40%;" data-district="industrial">
+                工业区
+            </div>
+            
+            <div class="district heat-high" style="width: 100px; height: 70px; top: 70%; left: 45%;" data-district="downtown">
+                市中心
+            </div>
+            
+            <!-- 传播路径 -->
+            <div class="spread-path" style="width: 120px; top: 50%; left: 50%; transform: translate(0, -50%) rotate(30deg);"></div>
+            <div class="spread-path" style="width: 150px; top: 50%; left: 50%; transform: translate(0, -50%) rotate(-20deg);"></div>
+            <div class="spread-path" style="width: 180px; top: 50%; left: 50%; transform: translate(0, -50%) rotate(70deg);"></div>
+            
+            <!-- 移动点 -->
+            <div class="moving-dot" style="top: 50%; left: 50%;"></div>
+            
+            <!-- 统计卡片 -->
+            <div class="stats-card" id="statsCard">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-semibold" id="districtName">区域名称</h3>
+                    <button class="text-gray-400 hover:text-white" id="closeStats">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mb-3">
+                    <div>
+                        <p class="text-xs text-gray-400">活跃毒株</p>
+                        <p class="text-lg font-bold gradient-text-gold" id="activeStrains">0</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400">感染人数</p>
+                        <p class="text-lg font-bold gradient-text-gold" id="infectedCount">0</p>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <p class="text-xs text-gray-400 mb-1">热门毒株</p>
+                    <p class="text-sm" id="topStrain">-</p>
+                </div>
+                <button class="w-full py-2 rounded-lg gradient-gold text-gray-900 font-medium text-sm">
+                    查看详情
+                </button>
+            </div>
+            
+            <!-- 预测弹窗 -->
+            <div class="prediction-popup" id="predictionPopup">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-route text-yellow-400 mr-2"></i>
+                    <h4 class="font-semibold text-sm">传播预测</h4>
+                </div>
+                <p class="text-xs text-gray-300">预计5分钟后覆盖临江街道</p>
+            </div>
+            
+            <!-- 地图控制按钮 -->
+            <div class="map-control" style="top: 20px; right: 20px;">
+                <i class="fas fa-plus text-white"></i>
+            </div>
+            <div class="map-control" style="top: 70px; right: 20px;">
+                <i class="fas fa-minus text-white"></i>
+            </div>
+        </div>
+
+        <!-- 底部导航栏 -->
+        <nav class="bottom-nav">
+            <div class="max-w-md mx-auto flex justify-around items-center">
+                <a class="nav-item text-gray-400" href="/index.html">
+                    <i class="fas fa-virus"></i>
+                    <span>病毒库</span>
+                </a>
+                <a class="nav-item active" aria-current="page" href="/spread-map.html">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>图谱</span>
+                </a>
+                <a class="nav-item text-gray-400" href="/create-strain.html">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>发布</span>
+                </a>
+                <a class="nav-item text-gray-400" href="/immunity-profile.html">
+                    <i class="fas fa-user-circle"></i>
+                    <span>档案</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const districts = document.querySelectorAll('.district');
+            const statsCard = document.getElementById('statsCard');
+            const closeStats = document.getElementById('closeStats');
+            const districtName = document.getElementById('districtName');
+            const activeStrains = document.getElementById('activeStrains');
+            const infectedCount = document.getElementById('infectedCount');
+            const topStrain = document.getElementById('topStrain');
+            const viewOptions = document.querySelectorAll('.view-option');
+            const predictionPopup = document.getElementById('predictionPopup');
+            
+            // 区域数据
+            const districtData = {
+                home: {
+                    name: '家园',
+                    activeStrains: 12,
+                    infectedCount: 45,
+                    topStrain: '周末咖啡店探店'
+                },
+                commercial: {
+                    name: '商业区',
+                    activeStrains: 18,
+                    infectedCount: 67,
+                    topStrain: '新开餐厅推荐'
+                },
+                park: {
+                    name: '中央公园',
+                    activeStrains: 23,
+                    infectedCount: 89,
+                    topStrain: '周末晨跑小组'
+                },
+                university: {
+                    name: '大学城',
+                    activeStrains: 31,
+                    infectedCount: 156,
+                    topStrain: '期末复习资料分享'
+                },
+                residential: {
+                    name: '住宅区',
+                    activeStrains: 15,
+                    infectedCount: 52,
+                    topStrain: '社区团购信息'
+                },
+                industrial: {
+                    name: '工业区',
+                    activeStrains: 8,
+                    infectedCount: 23,
+                    topStrain: '工厂招聘信息'
+                },
+                downtown: {
+                    name: '市中心',
+                    activeStrains: 25,
+                    infectedCount: 98,
+                    topStrain: '周末音乐节'
+                }
+            };
+            
+            // 区域点击事件
+            districts.forEach(district => {
+                district.addEventListener('click', function() {
+                    const districtId = this.getAttribute('data-district');
+                    const data = districtData[districtId];
+                    
+                    if (data) {
+                        districtName.textContent = data.name;
+                        activeStrains.textContent = data.activeStrains;
+                        infectedCount.textContent = data.infectedCount;
+                        topStrain.textContent = data.topStrain;
+                        
+                        // 获取区域位置
+                        const rect = this.getBoundingClientRect();
+                        const containerRect = this.parentElement.getBoundingClientRect();
+                        
+                        // 设置卡片位置
+                        let cardLeft = rect.left - containerRect.left;
+                        let cardTop = rect.top - containerRect.top + rect.height + 10;
+                        
+                        // 确保卡片不超出容器边界
+                        if (cardLeft + 200 > containerRect.width) {
+                            cardLeft = rect.left - containerRect.left - 200 + rect.width;
+                        }
+                        
+                        if (cardTop + 180 > containerRect.height) {
+                            cardTop = rect.top - containerRect.top - 180;
+                        }
+                        
+                        statsCard.style.left = `${cardLeft}px`;
+                        statsCard.style.top = `${cardTop}px`;
+                        statsCard.classList.add('active');
+                        
+                        // 显示预测弹窗
+                        setTimeout(() => {
+                            predictionPopup.style.left = `${cardLeft}px`;
+                            predictionPopup.style.top = `${cardTop - 60}px`;
+                            predictionPopup.classList.add('active');
+                            
+                            setTimeout(() => {
+                                predictionPopup.classList.remove('active');
+                            }, 3000);
+                        }, 1000);
+                    }
+                });
+            });
+            
+            // 关闭统计卡片
+            closeStats.addEventListener('click', function() {
+                statsCard.classList.remove('active');
+            });
+            
+            // 视图切换
+            viewOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    viewOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 切换视图
+                    if (this.textContent === '传播路径') {
+                        // 显示传播路径，隐藏热力图
+                        document.querySelectorAll('.spread-path').forEach(path => {
+                            path.style.display = 'block';
+                        });
+                        document.querySelectorAll('.heat-wave').forEach(wave => {
+                            wave.style.display = 'none';
+                        });
+                    } else {
+                        // 显示热力图，隐藏传播路径
+                        document.querySelectorAll('.spread-path').forEach(path => {
+                            path.style.display = 'none';
+                        });
+                        document.querySelectorAll('.heat-wave').forEach(wave => {
+                            wave.style.display = 'block';
+                        });
+                    }
+                });
+            });
+            
+            // 地图控制
+            const mapControls = document.querySelectorAll('.map-control');
+            const mapContainer = document.querySelector('.map-container');
+            let scale = 1;
+            
+            mapControls[0].addEventListener('click', function() {
+                scale = Math.min(scale + 0.1, 2);
+                mapContainer.style.transform = `scale(${scale})`;
+            });
+            
+            mapControls[1].addEventListener('click', function() {
+                scale = Math.max(scale - 0.1, 0.5);
+                mapContainer.style.transform = `scale(${scale})`;
+            });
+            
+            // 底部导航切换
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    navItems.forEach(i => i.classList.remove('active'));
+                    i.classList.add('text-gray-400');
+                    this.classList.add('active');
+                    this.classList.remove('text-gray-400');
+                });
+            });
+            
+            // 模拟移动点动画
+            const movingDot = document.querySelector('.moving-dot');
+            let angle = 0;
+            
+            function animateMovingDot() {
+                angle += 0.02;
+                const radius = 100;
+                const x = 50 + radius * Math.cos(angle);
+                const y = 50 + radius * Math.sin(angle);
+                
+                movingDot.style.left = `${x}%`;
+                movingDot.style.top = `${y}%`;
+                
+                requestAnimationFrame(animateMovingDot);
+            }
+            
+            animateMovingDot();
+        });
+    </script>
+</body>
+</html>

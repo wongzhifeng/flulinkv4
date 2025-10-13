@@ -1,42 +1,64 @@
-# Zeabur部署配置
-# 基于《德道经》"无为而治"哲学的部署策略
+# FluLink 星尘共鸣版 v4.0 - Zeabur 部署配置
 
-# 项目名称
-name: flulink
+services:
+  # PocketBase 后端服务
+  pocketbase:
+    build: .
+    ports:
+      - 8090:8090
+    environment:
+      - PB_ENCRYPTION_KEY=${PB_ENCRYPTION_KEY}
+      - PB_HOOKS_DIR=/app/pocketbase/hooks
+      - PB_PUBLIC_URL=${PUBLIC_URL}
+      - PB_ADMIN_EMAIL=${PB_ADMIN_EMAIL}
+      - PB_ADMIN_PASSWORD=${PB_ADMIN_PASSWORD}
+    volumes:
+      - pb_data:/pb_data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-# 运行时
-runtime: bun
+  # AI 智能服务
+  ai-service:
+    build: ./ai-service
+    ports:
+      - 8000:8000
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - CHROMA_DB_URL=${CHROMA_DB_URL}
+      - POCKETBASE_URL=${POCKETBASE_URL}
+    depends_on:
+      - pocketbase
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-# 构建命令
-build: bun install && bun run build
+  # Next.js 前端服务
+  frontend:
+    build: ./frontend
+    ports:
+      - 3000:3000
+    environment:
+      - NEXT_PUBLIC_POCKETBASE_URL=${POCKETBASE_URL}
+      - NEXT_PUBLIC_AI_SERVICE_URL=${AI_SERVICE_URL}
+      - NODE_ENV=production
+    depends_on:
+      - pocketbase
+      - ai-service
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-# 启动命令
-start: bun run start
+volumes:
+  pb_data:
+    driver: local
 
-# 环境变量
-env:
-  NODE_ENV: production
-  TURSO_DATABASE_URL: ${TURSO_DATABASE_URL}
-  TURSO_AUTH_TOKEN: ${TURSO_AUTH_TOKEN}
-  TURSO_SYNC_URL: ${TURSO_SYNC_URL}
-
-# 端口配置（Zeabur会自动分配，通常为8080）
-port: 8080
-
-# 健康检查
-healthcheck:
-  path: /api/health
-  interval: 30s
-  timeout: 10s
-  retries: 3
-
-# 资源限制
-resources:
-  memory: 512Mi
-  cpu: 0.5
-
-# 自动扩缩容
-autoscaling:
-  min: 1
-  max: 10
-  target: 70
+networks:
+  default:
+    driver: bridge

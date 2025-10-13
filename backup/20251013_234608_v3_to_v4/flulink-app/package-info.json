@@ -1,0 +1,33 @@
+{
+    "name": "flulink-app",
+    "version": "1.0.0",
+    "description": "FluLink 社交应用 - 病毒式传播的创新社交平台",
+    "main": "index.html",
+    "scripts": {
+      "start": "open index.html",
+      "dev": "python3 -m http.server 8000",
+      "build": "echo 'No build process needed for static HTML files'"
+    },
+    "keywords": [
+      "social-app",
+      "viral-content",
+      "mobile-ui",
+      "dark-theme",
+      "neumorphism"
+    ],
+    "author": "FluLink Team",
+    "license": "MIT",
+    "dependencies": {
+      "tailwindcss": "^2.2.19",
+      "font-awesome": "^6.4.0"
+    },
+    "devDependencies": {},
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/flulink/flulink-app.git"
+    },
+    "bugs": {
+      "url": "https://github.com/flulink/flulink-app/issues"
+    },
+    "homepage": "https://github.com/flulink/flulink-app#readme"
+  }
