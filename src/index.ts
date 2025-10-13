@@ -356,49 +356,81 @@ const server = serve({
       });
     }
     
-    // 监控数据生成测试API
-    if (url.pathname === '/api/monitoring/generate-test-data' && request.method === 'POST') {
+    // 监控表创建测试API
+    if (url.pathname === '/api/monitoring/create-tables' && request.method === 'POST') {
       try {
-        const { performanceMonitor } = await import('./lib/monitoring/performance-middleware');
-        const { errorMonitor } = await import('./lib/monitoring/error-monitoring');
-        
-        // 生成测试性能数据
-        for (let i = 0; i < 10; i++) {
-          performanceMonitor.recordMetric({
-            url: '/api/test',
-            method: 'GET',
-            duration: Math.random() * 500 + 100, // 100-600ms
-            status: Math.random() > 0.1 ? 200 : 500, // 90%成功率
-            timestamp: Date.now() - Math.random() * 3600000, // 过去1小时内
-            ipAddress: '127.0.0.1',
-            userAgent: 'Test Agent',
+        const { tursoClient } = await import('./lib/database');
+        if (!tursoClient) {
+          return new Response(JSON.stringify({
+            success: false,
+            message: 'Turso客户端未初始化',
+            timestamp: new Date().toISOString(),
+          }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
           });
         }
         
-        // 生成测试错误数据
-        const testErrors = [
-          { level: 'error' as const, message: '数据库连接超时' },
-          { level: 'warning' as const, message: 'API响应时间过长' },
-          { level: 'info' as const, message: '用户登录成功' },
+        // 创建监控表
+        const tables = [
+          {
+            name: 'monitoring_metrics',
+            sql: `CREATE TABLE IF NOT EXISTS monitoring_metrics (
+              id TEXT PRIMARY KEY,
+              type TEXT NOT NULL,
+              metric TEXT NOT NULL,
+              value REAL NOT NULL,
+              timestamp INTEGER NOT NULL,
+              metadata TEXT,
+              created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )`
+          },
+          {
+            name: 'error_logs',
+            sql: `CREATE TABLE IF NOT EXISTS error_logs (
+              id TEXT PRIMARY KEY,
+              level TEXT NOT NULL,
+              message TEXT NOT NULL,
+              stack TEXT,
+              url TEXT,
+              user_id TEXT,
+              metadata TEXT,
+              resolved INTEGER NOT NULL DEFAULT 0,
+              created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+              resolved_at DATETIME
+            )`
+          },
+          {
+            name: 'user_sessions',
+            sql: `CREATE TABLE IF NOT EXISTS user_sessions (
+              id TEXT PRIMARY KEY,
+              user_id TEXT NOT NULL,
+              session_token TEXT NOT NULL UNIQUE,
+              ip_address TEXT,
+              user_agent TEXT,
+              last_activity DATETIME NOT NULL,
+              created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+              expires_at DATETIME NOT NULL
+            )`
+          }
         ];
         
-        for (const error of testErrors) {
-          errorMonitor.recordError({
-            ...error,
-            url: '/api/test',
-            userId: 'test_user',
-            metadata: { test: true },
-          });
+        const results = [];
+        for (const table of tables) {
+          try {
+            await tursoClient.execute(table.sql);
+            results.push({ table: table.name, status: 'success' });
+            console.log(`✅ 创建监控表 ${table.name} 成功`);
+          } catch (error) {
+            results.push({ table: table.name, status: 'error', error: error.message });
+            console.log(`❌ 创建监控表 ${table.name} 失败:`, error.message);
+          }
         }
         
         return new Response(JSON.stringify({
           success: true,
-          message: '测试数据生成成功',
-          data: {
-            performanceMetrics: 10,
-            errorLogs: testErrors.length,
-            timestamp: new Date().toISOString(),
-          },
+          message: '监控表创建完成',
+          data: results,
           timestamp: new Date().toISOString(),
         }), {
           status: 200,
@@ -407,7 +439,7 @@ const server = serve({
       } catch (error) {
         return new Response(JSON.stringify({
           success: false,
-          message: '测试数据生成失败',
+          message: '监控表创建失败',
           error: error instanceof Error ? error.message : '未知错误',
           timestamp: new Date().toISOString(),
         }), {
