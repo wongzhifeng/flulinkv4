@@ -1,0 +1,191 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* FluLink v4.0 全局样式 */
+
+/* CSS 变量定义 */
+:root {
+  --bg-primary: #0a0a1a;
+  --bg-secondary: #1a1a2e;
+  --bg-card: #16213e;
+  --text-primary: #eaeaea;
+  --text-secondary: #a8a8a8;
+  --accent-gold: #ffd700;
+  --accent-1: #e94560;
+  --accent-2: #533483;
+  --accent-3: #00adb5;
+  --neumorphism-light: rgba(255, 255, 255, 0.05);
+  --neumorphism-dark: rgba(0, 0, 0, 0.2);
+}
+
+/* 基础样式重置 */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-gold);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ffaa00;
+}
+
+/* 基础组件样式 */
+@layer components {
+  /* 新拟态卡片 */
+  .neumorphism-card {
+    @apply bg-gradient-card rounded-2xl shadow-neumorphism transition-all duration-300 ease-in-out;
+  }
+
+  .neumorphism-card:hover {
+    @apply transform -translate-y-1 shadow-neumorphism-hover;
+  }
+
+  /* 玻璃效果 */
+  .glass-effect {
+    @apply bg-primary-secondary/70 backdrop-blur-glass border border-white/10;
+  }
+
+  /* 金色渐变文字 */
+  .gradient-text-gold {
+    @apply bg-gradient-gold bg-clip-text text-transparent;
+  }
+
+  /* 病毒脉冲效果 */
+  .virus-pulse {
+    @apply relative overflow-hidden;
+  }
+
+  .virus-pulse::after {
+    content: '';
+    @apply absolute top-0 left-0 h-full w-1/3 bg-white/30 blur-sm animate-virus-pulse;
+  }
+
+  /* 按钮样式 */
+  .btn-primary {
+    @apply bg-gradient-gold text-black font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5;
+  }
+
+  .btn-secondary {
+    @apply neumorphism-card text-text-primary font-medium px-6 py-3 rounded-xl hover:bg-primary-card transition-all duration-300;
+  }
+
+  .btn-danger {
+    @apply bg-gradient-to-r from-accent-red to-red-600 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5;
+  }
+
+  /* 输入框样式 */
+  .input-field {
+    @apply bg-gradient-card-inset text-text-primary placeholder-text-secondary px-4 py-3 rounded-xl border-0 focus:outline-none focus:ring-2 focus:ring-accent-gold transition-all duration-300;
+  }
+
+  /* 导航样式 */
+  .nav-item {
+    @apply flex items-center justify-center p-3 rounded-xl transition-all duration-300 text-text-secondary hover:text-accent-gold hover:bg-primary-card;
+  }
+
+  .nav-item.active {
+    @apply text-accent-gold bg-primary-card;
+  }
+
+  /* 加载动画 */
+  .loading-spinner {
+    @apply animate-spin rounded-full border-2 border-accent-gold border-t-transparent;
+  }
+
+  /* 浮动动画 */
+  .float-animation {
+    @apply animate-float;
+  }
+}
+
+/* 工具类 */
+@layer utilities {
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .text-shadow-lg {
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  }
+
+  .backdrop-blur-glass {
+    backdrop-filter: blur(10px);
+  }
+
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .transform-style-preserve-3d {
+    transform-style: preserve-3d;
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 640px) {
+  .neumorphism-card {
+    @apply rounded-xl;
+  }
+  
+  .btn-primary,
+  .btn-secondary,
+  .btn-danger {
+    @apply px-4 py-2 text-sm;
+  }
+}
+
+/* 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #0a0a1a;
+    --bg-secondary: #1a1a2e;
+    --bg-card: #16213e;
+  }
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+  .neumorphism-card {
+    @apply border border-white/20;
+  }
+  
+  .btn-primary {
+    @apply border-2 border-accent-gold;
+  }
+}
+
+/* 减少动画模式 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
