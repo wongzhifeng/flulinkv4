@@ -1,4 +1,4 @@
-// FluLink v4.0 AI 服务实现
+# FluLink v4.0 AI 服务实现
 
 import os
 from fastapi import FastAPI, HTTPException
