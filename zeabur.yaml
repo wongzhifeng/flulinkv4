@@ -48,7 +48,7 @@ services:
       context: .
       dockerfile: Dockerfile.frontend
     ports:
-      - 3000:3000
+      - 3000:8080
     environment:
       - NEXT_PUBLIC_POCKETBASE_URL=${POCKETBASE_URL}
       - NEXT_PUBLIC_AI_SERVICE_URL=${AI_SERVICE_URL}
@@ -57,7 +57,7 @@ services:
       - pocketbase
       - ai-service
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
       interval: 30s
       timeout: 10s
       retries: 3
