@@ -1,3 +1,24 @@
+# Current Task - Progress Update (2025-10-14)
+
+## 进度概览
+- 已生成 PocketBase 表结构配置文件：`pocketbase/schema.json`
+- 编写导入与校验指南：`pocketbase/README.md`
+- 记录配置完成摘要：`memory/pocketbase-schema-config-complete.md`
+- 建立待办：导入 Zeabur PocketBase 并校验字段/关系/规则/索引
+
+## 本次变更点
+- 新增 collections：`users`, `star_seeds`, `star_clusters`, `interactions` 的完整 schema（含索引、权限规则、关系字段）
+- 面向 AI-Native 的向量/JSON 字段：`interest_vector`, `content_vector`, `cluster_vector`, `ai_generated_metadata`, `ai_analyzed_sentiment`
+
+## 与前端/服务的关联
+- 前端 `NEXT_PUBLIC_POCKETBASE_URL` 指向生产：`https://pocketbase-final.zeabur.app`
+- 后续创建 Hooks 与 AI 服务联动：`star_seeds` 创建后自动传播，`interactions` 实时更新光度
+
+## 待完成
+- 在 Zeabur 管理面板导入 `pocketbase/schema.json`
+- 校验索引与权限规则是否生效
+- 使用 API 进行 CRUD 冒烟测试
+
 # 今日重点任务 - 用户认证系统开发
 
 **任务时间**：2025-01-12

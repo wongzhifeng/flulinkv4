@@ -1,4 +1,7 @@
-# FluLink 星尘共鸣版 v4.0 - Zeabur 部署配置
+# Zeabur 专用 Docker Compose 配置
+# 强制使用正确的 Dockerfile 构建路径
+
+version: '3.8'
 
 services:
   # PocketBase 后端服务
@@ -7,7 +10,7 @@ services:
       context: ./pocketbase
       dockerfile: Dockerfile
     ports:
-      - 8090:8090
+      - "8090:8090"
     environment:
       - PB_ENCRYPTION_KEY=${PB_ENCRYPTION_KEY}
       - PB_HOOKS_DIR=/app/pocketbase/hooks
@@ -22,6 +25,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    restart: unless-stopped
 
   # AI 智能服务
   ai-service:
@@ -29,7 +33,7 @@ services:
       context: ./ai-service
       dockerfile: Dockerfile
     ports:
-      - 8000:8000
+      - "8000:8000"
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - CHROMA_DB_URL=${CHROMA_DB_URL}
@@ -41,14 +45,15 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    restart: unless-stopped
 
   # Next.js 前端服务
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile.frontend
+      dockerfile: Dockerfile
     ports:
-      - 3000:3000
+      - "3000:3000"
     environment:
       - NEXT_PUBLIC_POCKETBASE_URL=${POCKETBASE_URL}
       - NEXT_PUBLIC_AI_SERVICE_URL=${AI_SERVICE_URL}
@@ -61,6 +66,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    restart: unless-stopped
 
 volumes:
   pb_data:
