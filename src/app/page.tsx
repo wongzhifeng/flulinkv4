@@ -4,34 +4,21 @@
 
 import React, { useState, useEffect } from 'react'
 import { Loading } from '@/components/ui/index'
-import { pb, type User } from '@/lib/pocketbase'
 import { useRouter } from 'next/navigation'
 
 export default function RootPage() {
   const router = useRouter()
-  const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        // 检查用户是否已登录
-        const user = pb.authStore.model as User | null
-        if (user) {
-          setCurrentUser(user)
-        } else {
-          // 重定向到登录页面
-          router.push('/login')
-        }
-      } catch (error) {
-        console.error('认证检查失败:', error)
-        router.push('/login')
-      } finally {
-        setIsLoading(false)
-      }
-    }
+    // 简单的重定向逻辑，避免在服务端渲染时访问浏览器 API
+    const timer = setTimeout(() => {
+      setIsLoading(false)
+      // 重定向到主页面
+      router.push('/')
+    }, 1000)
 
-    checkAuth()
+    return () => clearTimeout(timer)
   }, [router])
 
   if (isLoading) {
@@ -45,11 +32,5 @@ export default function RootPage() {
     )
   }
 
-  if (!currentUser) {
-    return null
-  }
-
-  // 重定向到主页面
-  router.push('/')
   return null
 }
