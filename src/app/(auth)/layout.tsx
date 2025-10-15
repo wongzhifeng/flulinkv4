@@ -2,46 +2,16 @@
 
 'use client'
 
-import React, { useState } from 'react'
-import LoginPage from './login/page'
-import RegisterPage from './register/page'
+import React from 'react'
 
-export default function AuthLayout() {
-  const [authMode, setAuthMode] = useState<'login' | 'register'>('login')
-
-  const handleLoginSuccess = (user: any) => {
-    console.log('登录成功:', user)
-    // TODO: 重定向到主应用
-    window.location.href = '/'
-  }
-
-  const handleRegisterSuccess = (user: any) => {
-    console.log('注册成功:', user)
-    // TODO: 重定向到主应用
-    window.location.href = '/'
-  }
-
-  const handleSwitchToLogin = () => {
-    setAuthMode('login')
-  }
-
-  const handleSwitchToRegister = () => {
-    setAuthMode('register')
-  }
-
+export default function AuthLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
     <div className="min-h-screen bg-primary-bg">
-      {authMode === 'login' ? (
-        <LoginPage
-          onLoginSuccess={handleLoginSuccess}
-          onSwitchToRegister={handleSwitchToRegister}
-        />
-      ) : (
-        <RegisterPage
-          onRegisterSuccess={handleRegisterSuccess}
-          onSwitchToLogin={handleSwitchToLogin}
-        />
-      )}
+      {children}
     </div>
   )
 }
