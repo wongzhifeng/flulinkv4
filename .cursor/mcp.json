@@ -1,11 +1,15 @@
 {
-  "servers": {
+  "mcpServers": {
     "playwright": {
       "command": "npm",
       "args": ["run", "mcp:playwright"],
       "env": {
         "PLAYWRIGHT_HEADLESS": "true"
       }
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
     }
   }
 }
