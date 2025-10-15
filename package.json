@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "mcp:playwright": "ts-node mcp-servers/playwright.ts",
     "pocketbase": "pocketbase serve --http=0.0.0.0:8090",
     "ai-service": "cd ai-service && python -m uvicorn main:app --host 0.0.0.0 --port 8000",
     "setup": "npm run setup:pocketbase && npm run setup:ai",
@@ -15,25 +16,28 @@
     "setup:ai": "cd ai-service && pip install -r requirements.txt"
   },
   "dependencies": {
-    "next": "^15.0.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "pocketbase": "^0.22.0",
     "@types/node": "^20.0.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
-    "typescript": "^5.0.0",
-    "tailwindcss": "^3.4.0",
     "autoprefixer": "^10.4.0",
-    "postcss": "^8.4.0",
-    "lucide-react": "^0.400.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
-    "tailwind-merge": "^2.0.0"
+    "lucide-react": "^0.400.0",
+    "next": "^15.0.0",
+    "pocketbase": "^0.22.0",
+    "postcss": "^8.4.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^2.0.0",
+    "tailwindcss": "^3.4.0"
   },
   "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.20.0",
     "eslint": "^8.0.0",
-    "eslint-config-next": "^15.0.0"
+    "eslint-config-next": "^15.0.0",
+    "playwright": "^1.56.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   },
   "engines": {
     "node": ">=18.0.0"

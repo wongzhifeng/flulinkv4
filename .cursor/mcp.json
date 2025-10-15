@@ -1,0 +1,12 @@
+{
+  "servers": {
+    "playwright": {
+      "command": "npm",
+      "args": ["run", "mcp:playwright"],
+      "env": {
+        "PLAYWRIGHT_HEADLESS": "true"
+      }
+    }
+  }
+}
+
