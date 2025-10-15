@@ -49,3 +49,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
     </div>
   )
 }
+
+export default function PageWrapper(props: ProfilePageProps) {
+  return <ProfilePage {...props} />
+}
