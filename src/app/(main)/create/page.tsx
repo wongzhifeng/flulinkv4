@@ -5,23 +5,14 @@
 import React from 'react'
 import { TopNav, BottomNav } from '@/components/navigation'
 import { AISeedCreator } from '@/components/seed-creator/ai-seed-creator'
-import { User, StarSeed } from '@/lib/pocketbase'
+import { pb, type User, type StarSeed } from '@/lib/pocketbase'
+import { useRouter } from 'next/navigation'
 
-interface CreatePageProps {
-  currentUser: User
-  onPageChange: (page: string) => void
-  onSeedCreated: (seed: StarSeed) => void
-}
-
-export const CreatePage: React.FC<CreatePageProps> = ({
-  currentUser,
-  onPageChange,
-  onSeedCreated
-}) => {
-  const handleSeedCreated = (seed: StarSeed) => {
-    onSeedCreated(seed)
-    // 创建成功后跳转到首页
-    onPageChange('home')
+export default function CreatePage() {
+  const router = useRouter()
+  const currentUser = (pb.authStore.model || {}) as unknown as User
+  const handleSeedCreated = (_seed: StarSeed) => {
+    router.push('/')
   }
 
   return (
@@ -30,8 +21,8 @@ export const CreatePage: React.FC<CreatePageProps> = ({
       <TopNav
         title="创建星种"
         user={currentUser}
-        onMenuClick={() => onPageChange('home')}
-        onProfileClick={() => onPageChange('profile')}
+        onMenuClick={() => router.push('/')}
+        onProfileClick={() => router.push('/profile')}
       />
 
       {/* 主内容区域 */}
@@ -46,10 +37,7 @@ export const CreatePage: React.FC<CreatePageProps> = ({
       </main>
 
       {/* 底部导航 */}
-      <BottomNav
-        currentPage="create"
-        onPageChange={onPageChange}
-      />
+      <BottomNav currentPage="create" onPageChange={(page) => router.push(page === 'home' ? '/' : `/${page}`)} />
     </div>
   )
 }
