@@ -11,6 +11,9 @@ WORKDIR /app
 COPY package.json ./
 RUN npm install
 
+# Ensure TypeScript is available
+RUN npm list typescript || npm install typescript@^5.9.3
+
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
