@@ -9,7 +9,11 @@ export const metadata: Metadata = {
   description: '基于 AI Agent 驱动的下一代异步社交平台，通过智能传播算法实现内容的高效精准分发',
   keywords: ['AI', '社交平台', '智能传播', '向量检索', '星尘共鸣'],
   authors: [{ name: 'FluLink Team' }],
-  viewport: 'width=device-width, initial-scale=1',
+}
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
   themeColor: '#0a0a1a',
 }
 

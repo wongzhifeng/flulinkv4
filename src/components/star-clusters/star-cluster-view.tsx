@@ -36,7 +36,7 @@ export const StarClusterView: React.FC<StarClusterViewProps> = ({
   const [clusterMembers, setClusterMembers] = useState<ClusterMember[]>([])
   const [isLoadingMembers, setIsLoadingMembers] = useState(false)
 
-  const { findCompatibleClusters } = useVectorDB()
+  const vectorDB = useVectorDB()
 
   // 获取星团数据
   useEffect(() => {
