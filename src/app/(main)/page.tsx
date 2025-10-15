@@ -5,7 +5,7 @@
 import React, { useState, useEffect } from 'react'
 import { TopNav, BottomNav, Sidebar } from '@/components/navigation'
 import { StarMap } from '@/components/star-map/star-map'
-import { Card, Loading } from '@/components/ui'
+import { Card, Loading } from '@/components/ui/index'
 import { pb, type User, type StarSeed } from '@/lib/pocketbase'
 import { useRouter } from 'next/navigation'
 

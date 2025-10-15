@@ -7,7 +7,7 @@ import { HomePage } from './page'
 import { CreatePage } from './create/page'
 import { ClustersPage } from './clusters/page'
 import { ProfilePage } from './profile/page'
-import { Loading } from '@/components/ui'
+import { Loading } from '@/components/ui/index'
 import { User, StarSeed, StarCluster } from '@/lib/pocketbase'
 import { api } from '@/lib/pocketbase'
 

@@ -3,7 +3,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Button, Input, Card, Loading } from '@/components/ui'
+import { Button, Input, Card, Loading } from '@/components/ui/index'
 import { cn, isValidEmail, validatePassword } from '@/lib/utils'
 import { api } from '@/lib/pocketbase'
 
@@ -185,7 +185,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 }
 
 // App Router 页面组件默认导出
-export const metadata = { title: '登录 - FluLink' }
+// 注意：本页面为 client 组件，不能导出 metadata，避免 Next.js 构建报错
 
 export default function Page() {
   const handleSuccess = (_user: any) => {

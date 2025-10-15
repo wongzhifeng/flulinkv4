@@ -3,7 +3,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { Card, Button, Input, Avatar, Tag, Loading } from '@/components/ui'
+import { Card, Button, Input, Avatar, Tag, Loading } from '@/components/ui/index'
 import { cn, formatDate, formatNumber } from '@/lib/utils'
 import { User, StarSeed, StarCluster } from '@/lib/pocketbase'
 

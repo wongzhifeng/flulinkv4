@@ -3,7 +3,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Button, Input, Card, Loading } from '@/components/ui'
+import { Button, Input, Card, Loading } from '@/components/ui/index'
 import { cn, isValidEmail, validatePassword } from '@/lib/utils'
 import { api } from '@/lib/pocketbase'
 

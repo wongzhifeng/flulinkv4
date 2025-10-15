@@ -11,7 +11,7 @@
       "command": "npx",
       "args": ["-y", "@upstash/context7-mcp@latest"],
       "env": {
-        "CONTEXT7_API_KEY": ""
+        "CONTEXT7_API_KEY": "ctx7sk-3eff1f70-bd18-43af-955d-c2a3f0f94f45"
       }
     },
     "sequential-thinking": {

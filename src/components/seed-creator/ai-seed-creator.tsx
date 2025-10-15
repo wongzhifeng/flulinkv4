@@ -3,7 +3,7 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
-import { Card, Button, Input, Textarea, Modal, Loading, Tag } from '@/components/ui'
+import { Card, Button, Input, Textarea, Modal, Loading, Tag } from '@/components/ui/index'
 import { cn, formatDate, generateId } from '@/lib/utils'
 import { StarSeed, User } from '@/lib/pocketbase'
 import { useContentAgent } from '@/lib/ai-agents'

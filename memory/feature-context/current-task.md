@@ -15,9 +15,11 @@
 - 后续创建 Hooks 与 AI 服务联动：`star_seeds` 创建后自动传播，`interactions` 实时更新光度
 
 ## 待完成
-- 在 Zeabur 管理面板导入 `pocketbase/schema.json`
-- 校验索引与权限规则是否生效
-- 使用 API 进行 CRUD 冒烟测试
+- [ ] 在 Zeabur 管理面板导入 `pocketbase/schema.json`
+- [ ] 校验索引与权限规则是否生效
+- [ ] 使用 API 进行 CRUD 冒烟测试
+- [ ] 验证 Zeabur 重新部署成功
+- [ ] 测试 PocketBase 服务健康状态
 
 # 今日重点任务 - 用户认证系统开发
 

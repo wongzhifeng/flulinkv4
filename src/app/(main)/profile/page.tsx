@@ -27,7 +27,7 @@ export default function ProfilePage() {
       {/* 顶部导航 */}
       <TopNav
         title="个人档案"
-        user={currentUser}
+        user={{ name: currentUser.username || '用户', avatar: currentUser.avatar }}
         onMenuClick={() => router.push('/')}
         onProfileClick={() => router.push('/profile')}
       />

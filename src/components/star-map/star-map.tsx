@@ -3,7 +3,7 @@
 'use client'
 
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Card, Loading, Tag } from '@/components/ui'
+import { Card, Loading, Tag } from '@/components/ui/index'
 import { cn, formatDate, formatNumber, calculateDistance } from '@/lib/utils'
 import { StarSeed, User } from '@/lib/pocketbase'
 import { useVectorDB } from '@/lib/vector-db'

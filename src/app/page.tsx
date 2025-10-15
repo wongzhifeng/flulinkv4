@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { MainApp } from './(main)/layout'
-import { Loading } from '@/components/ui'
+import { Loading } from '@/components/ui/index'
 import { User } from '@/lib/pocketbase'
 import { api } from '@/lib/pocketbase'
 
