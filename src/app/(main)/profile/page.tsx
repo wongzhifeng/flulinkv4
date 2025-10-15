@@ -5,29 +5,31 @@
 import React from 'react'
 import { TopNav, BottomNav } from '@/components/navigation'
 import { UserProfile } from '@/components/user-profile/user-profile'
-import { User } from '@/lib/pocketbase'
+import { pb, type User } from '@/lib/pocketbase'
+import { useRouter } from 'next/navigation'
 
-interface ProfilePageProps {
-  currentUser: User
-  onPageChange: (page: string) => void
-  onUpdateProfile: (updates: Partial<User>) => Promise<void>
-  onLogout: () => void
-}
+export default function ProfilePage() {
+  const router = useRouter()
+  const currentUser = (pb.authStore.model || {}) as unknown as User
+  
+  const onUpdateProfile = async (updates: Partial<User>) => {
+    // TODO: 实现用户资料更新
+    console.log('更新用户资料:', updates)
+  }
+  
+  const onLogout = () => {
+    pb.authStore.clear()
+    router.push('/login')
+  }
 
-export const ProfilePage: React.FC<ProfilePageProps> = ({
-  currentUser,
-  onPageChange,
-  onUpdateProfile,
-  onLogout
-}) => {
   return (
     <div className="min-h-screen bg-primary-bg">
       {/* 顶部导航 */}
       <TopNav
         title="个人档案"
         user={currentUser}
-        onMenuClick={() => onPageChange('home')}
-        onProfileClick={() => onPageChange('profile')}
+        onMenuClick={() => router.push('/')}
+        onProfileClick={() => router.push('/profile')}
       />
 
       {/* 主内容区域 */}
@@ -44,12 +46,8 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
       {/* 底部导航 */}
       <BottomNav
         currentPage="profile"
-        onPageChange={onPageChange}
+        onPageChange={(page) => router.push(page === 'home' ? '/' : `/${page}`)}
       />
     </div>
   )
-}
-
-export default function PageWrapper(props: ProfilePageProps) {
-  return <ProfilePage {...props} />
 }
