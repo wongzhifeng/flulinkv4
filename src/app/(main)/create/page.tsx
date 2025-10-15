@@ -20,7 +20,7 @@ export default function CreatePage() {
       {/* 顶部导航 */}
       <TopNav
         title="创建星种"
-        user={currentUser}
+        user={{ name: currentUser.username || '用户', avatar: currentUser.avatar }}
         onMenuClick={() => router.push('/')}
         onProfileClick={() => router.push('/profile')}
       />

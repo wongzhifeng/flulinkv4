@@ -30,7 +30,7 @@ export default function HomePage() {
       {/* 顶部导航 */}
       <TopNav
         title="FluLink"
-        user={currentUser}
+        user={{ name: currentUser.username || '用户', avatar: currentUser.avatar }}
         onMenuClick={handleMenuClick}
         onProfileClick={handleProfileClick}
       />
@@ -124,7 +124,7 @@ export default function HomePage() {
       {/* 底部导航 */}
       <BottomNav
         currentPage="home"
-        onPageChange={onPageChange}
+        onPageChange={(page) => router.push(page === 'home' ? '/' : `/${page}`)}
       />
     </div>
   )

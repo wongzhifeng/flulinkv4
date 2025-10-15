@@ -19,7 +19,7 @@ export default function ClustersPage() {
       {/* 顶部导航 */}
       <TopNav
         title="星团共鸣"
-        user={currentUser}
+        user={{ name: currentUser.username || '用户', avatar: currentUser.avatar }}
         onMenuClick={() => router.push('/')}
         onProfileClick={() => router.push('/profile')}
       />
