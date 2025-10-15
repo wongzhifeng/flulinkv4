@@ -1,15 +1,18 @@
 {
   "mcpServers": {
     "playwright": {
-      "command": "npm",
-      "args": ["run", "mcp:playwright"],
+      "command": "npx",
+      "args": ["-y", "@executeautomation/playwright-mcp-server"],
       "env": {
         "PLAYWRIGHT_HEADLESS": "true"
       }
     },
     "context7": {
       "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp@latest"]
+      "args": ["-y", "@upstash/context7-mcp@latest"],
+      "env": {
+        "CONTEXT7_API_KEY": ""
+      }
     },
     "sequential-thinking": {
       "command": "npx",
