@@ -1,4 +1,10 @@
 /** @type {import('next').NextConfig} */
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
 const nextConfig = {
   experimental: {
     appDir: true,
@@ -14,10 +20,10 @@ const nextConfig = {
   webpack: (config) => {
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
-      '@/components': require('path').resolve(__dirname, 'src/components'),
-      '@/lib': require('path').resolve(__dirname, 'src/lib'),
-      '@/types': require('path').resolve(__dirname, 'src/types'),
-      '@': require('path').resolve(__dirname, 'src'),
+      '@/components': path.resolve(__dirname, 'src/components'),
+      '@/lib': path.resolve(__dirname, 'src/lib'),
+      '@/types': path.resolve(__dirname, 'src/types'),
+      '@': path.resolve(__dirname, 'src'),
     }
     return config
   }
