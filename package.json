@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "mcp:playwright": "ts-node mcp-servers/playwright.ts",
+    "mcp:playwright": "node --loader ts-node/esm mcp-servers/playwright.ts",
     "pocketbase": "pocketbase serve --http=0.0.0.0:8090",
     "ai-service": "cd ai-service && python -m uvicorn main:app --host 0.0.0.0 --port 8000",
     "setup": "npm run setup:pocketbase && npm run setup:ai",
@@ -37,7 +37,8 @@
     "eslint-config-next": "^15.0.0",
     "playwright": "^1.56.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "zod": "^3.25.76"
   },
   "engines": {
     "node": ">=18.0.0"
