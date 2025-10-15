@@ -11,7 +11,7 @@ const nextConfig = {
   },
   output: 'standalone',
   images: {
-    domains: ['localhost', 'your-domain.zeabur.app'],
+    domains: ['localhost', 'your-domain.zeabur.app', 'flulink-v4.zeabur.app'],
   },
   typescript: {
     // 暂时忽略类型错误以先通过构建（部署后再逐步修复）
