@@ -6,6 +6,9 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const nextConfig = {
+  experimental: {
+    appDir: true,
+  },
   output: 'standalone',
   images: {
     domains: ['localhost', 'your-domain.zeabur.app', 'flulink-v4.zeabur.app'],
