@@ -1,4 +1,4 @@
-import { PocketBase } from 'pocketbase'
+import PocketBase from 'pocketbase'
 
 // PocketBase 客户端配置
 export const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'https://pocketbase-final.zeabur.app')

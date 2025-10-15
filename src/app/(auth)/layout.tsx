@@ -3,8 +3,8 @@
 'use client'
 
 import React, { useState } from 'react'
-import { LoginPage } from './login/page'
-import { RegisterPage } from './register/page'
+import LoginPage from './login/page'
+import RegisterPage from './register/page'
 
 export default function AuthLayout() {
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login')
