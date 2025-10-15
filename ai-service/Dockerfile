@@ -24,8 +24,7 @@ COPY . .
 # 创建模型目录
 RUN mkdir -p /app/models
 
-# 预下载模型（使用单行，避免 Dockerfile 多行解析问题）
-RUN python -c "from sentence_transformers import SentenceTransformer; model = SentenceTransformer('all-MiniLM-L6-v2'); model.save('/app/models/all-MiniLM-L6-v2')"
+# 移除构建期模型预下载；在运行时首次请求加载模型（更稳健）
 
 # 暴露端口
 EXPOSE 8000
