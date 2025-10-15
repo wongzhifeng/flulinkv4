@@ -183,3 +183,16 @@ export const LoginPage: React.FC<LoginPageProps> = ({
     </div>
   )
 }
+
+// App Router 页面组件默认导出
+export const metadata = { title: '登录 - FluLink' }
+
+export default function Page() {
+  const handleSuccess = (_user: any) => {
+    // 登录成功后可在此进行路由跳转或状态更新
+  }
+  const handleSwitch = () => {
+    // 切换到注册页的逻辑，可使用路由跳转
+  }
+  return <LoginPage onLoginSuccess={handleSuccess} onSwitchToRegister={handleSwitch} />
+}
