@@ -3,37 +3,36 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { MainApp } from './(main)/layout'
 import { Loading } from '@/components/ui/index'
-import { User } from '@/lib/pocketbase'
-import { api } from '@/lib/pocketbase'
+import { pb, type User } from '@/lib/pocketbase'
+import { useRouter } from 'next/navigation'
 
 export default function RootPage() {
+  const router = useRouter()
   const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
         // 检查用户是否已登录
-        const user = await api.getCurrentUser()
+        const user = pb.authStore.model as User | null
         if (user) {
           setCurrentUser(user)
-          setIsAuthenticated(true)
         } else {
-          setIsAuthenticated(false)
+          // 重定向到登录页面
+          router.push('/login')
         }
       } catch (error) {
         console.error('认证检查失败:', error)
-        setIsAuthenticated(false)
+        router.push('/login')
       } finally {
         setIsLoading(false)
       }
     }
 
     checkAuth()
-  }, [])
+  }, [router])
 
   if (isLoading) {
     return (
@@ -46,11 +45,11 @@ export default function RootPage() {
     )
   }
 
-  if (!isAuthenticated || !currentUser) {
-    // 重定向到登录页面
-    window.location.href = '/login'
+  if (!currentUser) {
     return null
   }
 
-  return <MainApp currentUser={currentUser} />
+  // 重定向到主页面
+  router.push('/')
+  return null
 }
