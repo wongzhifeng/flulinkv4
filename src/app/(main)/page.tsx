@@ -6,17 +6,12 @@ import React, { useState, useEffect } from 'react'
 import { TopNav, BottomNav, Sidebar } from '@/components/navigation'
 import { StarMap } from '@/components/star-map/star-map'
 import { Card, Loading } from '@/components/ui'
-import { User, StarSeed } from '@/lib/pocketbase'
+import { pb, type User, type StarSeed } from '@/lib/pocketbase'
+import { useRouter } from 'next/navigation'
 
-interface HomePageProps {
-  currentUser: User
-  onPageChange: (page: string) => void
-}
-
-export const HomePage: React.FC<HomePageProps> = ({
-  currentUser,
-  onPageChange
-}) => {
+export default function HomePage() {
+  const router = useRouter()
+  const currentUser = (pb.authStore.model || {}) as unknown as User
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [selectedStar, setSelectedStar] = useState<StarSeed | null>(null)
 
@@ -28,9 +23,7 @@ export const HomePage: React.FC<HomePageProps> = ({
     setSidebarOpen(true)
   }
 
-  const handleProfileClick = () => {
-    onPageChange('profile')
-  }
+  const handleProfileClick = () => router.push('/profile')
 
   return (
     <div className="min-h-screen bg-primary-bg">
@@ -47,7 +40,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         currentPage="home"
-        onPageChange={onPageChange}
+        onPageChange={(page) => router.push(page === 'home' ? '/' : `/${page}`)}
       />
 
       {/* 主内容区域 */}

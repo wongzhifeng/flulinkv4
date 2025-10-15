@@ -5,31 +5,23 @@
 import React from 'react'
 import { TopNav, BottomNav } from '@/components/navigation'
 import { StarClusterView } from '@/components/star-clusters/star-cluster-view'
-import { User, StarCluster } from '@/lib/pocketbase'
+import { pb, type User, type StarCluster } from '@/lib/pocketbase'
+import { useRouter } from 'next/navigation'
 
-interface ClustersPageProps {
-  currentUser: User
-  onPageChange: (page: string) => void
-  onClusterClick: (cluster: StarCluster) => void
-  onJoinCluster: (clusterId: string) => void
-  onLeaveCluster: (clusterId: string) => void
-}
-
-export const ClustersPage: React.FC<ClustersPageProps> = ({
-  currentUser,
-  onPageChange,
-  onClusterClick,
-  onJoinCluster,
-  onLeaveCluster
-}) => {
+export default function ClustersPage() {
+  const router = useRouter()
+  const currentUser = (pb.authStore.model || {}) as unknown as User
+  const onClusterClick = (_cluster: StarCluster) => {}
+  const onJoinCluster = (_clusterId: string) => {}
+  const onLeaveCluster = (_clusterId: string) => {}
   return (
     <div className="min-h-screen bg-primary-bg">
       {/* 顶部导航 */}
       <TopNav
         title="星团共鸣"
         user={currentUser}
-        onMenuClick={() => onPageChange('home')}
-        onProfileClick={() => onPageChange('profile')}
+        onMenuClick={() => router.push('/')}
+        onProfileClick={() => router.push('/profile')}
       />
 
       {/* 主内容区域 */}
@@ -45,10 +37,7 @@ export const ClustersPage: React.FC<ClustersPageProps> = ({
       </main>
 
       {/* 底部导航 */}
-      <BottomNav
-        currentPage="clusters"
-        onPageChange={onPageChange}
-      />
+      <BottomNav currentPage="clusters" onPageChange={(page) => router.push(page === 'home' ? '/' : `/${page}`)} />
     </div>
   )
 }

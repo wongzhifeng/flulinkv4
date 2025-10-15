@@ -226,3 +226,13 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
     </div>
   )
 }
+
+export default function Page() {
+  const handleSuccess = (_user: any) => {
+    // 注册成功后的跳转或状态处理
+  }
+  const handleSwitch = () => {
+    // 切换到登录页逻辑
+  }
+  return <RegisterPage onRegisterSuccess={handleSuccess} onSwitchToLogin={handleSwitch} />
+}
