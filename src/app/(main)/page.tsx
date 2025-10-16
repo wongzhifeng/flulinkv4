@@ -4,20 +4,24 @@
 
 import React, { useState, useEffect } from 'react'
 import { TopNav, BottomNav, Sidebar } from '@/components/navigation'
-import { StarMap } from '@/components/star-map/star-map'
 import { Card, Loading } from '@/components/ui/index'
-import { pb, type User, type StarSeed } from '@/lib/pocketbase'
 import { useRouter } from 'next/navigation'
 
 export default function HomePage() {
   const router = useRouter()
-  const currentUser = (pb.authStore.model || {}) as unknown as User
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [selectedStar, setSelectedStar] = useState<StarSeed | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [currentUser, setCurrentUser] = useState({ username: '用户', avatar: '' })
 
-  const handleStarClick = (star: StarSeed) => {
-    setSelectedStar(star)
-  }
+  useEffect(() => {
+    // 模拟用户数据加载
+    const timer = setTimeout(() => {
+      setCurrentUser({ username: 'FluLink 用户', avatar: '' })
+      setIsLoading(false)
+    }, 500)
+
+    return () => clearTimeout(timer)
+  }, [])
 
   const handleMenuClick = () => {
     setSidebarOpen(true)
@@ -25,12 +29,20 @@ export default function HomePage() {
 
   const handleProfileClick = () => router.push('/profile')
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-primary-bg flex items-center justify-center">
+        <Loading size="lg" />
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-primary-bg">
       {/* 顶部导航 */}
       <TopNav
         title="FluLink"
-        user={{ name: currentUser.username || '用户', avatar: currentUser.avatar }}
+        user={{ name: currentUser.username, avatar: currentUser.avatar }}
         onMenuClick={handleMenuClick}
         onProfileClick={handleProfileClick}
       />
@@ -57,13 +69,6 @@ export default function HomePage() {
               </p>
             </div>
           </Card>
-
-          {/* 星空图谱 */}
-          <StarMap
-            currentUser={currentUser}
-            onStarClick={handleStarClick}
-            className="mb-6"
-          />
 
           {/* 快速操作 */}
           <div className="grid grid-cols-2 gap-4 mb-6">
