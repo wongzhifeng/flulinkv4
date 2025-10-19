@@ -13,9 +13,12 @@
     "ai-service": "cd ai-service && python -m uvicorn main:app --host 0.0.0.0 --port 8000",
     "setup": "npm run setup:pocketbase && npm run setup:ai",
     "setup:pocketbase": "pocketbase migrate",
-    "setup:ai": "cd ai-service && pip install -r requirements.txt"
+    "setup:ai": "cd ai-service && pip install -r requirements.txt",
+    "agentrouter:dev": "next dev",
+    "agentrouter:build": "next build"
   },
   "dependencies": {
+    "@artinet/router": "^0.0.12",
     "@types/node": "^20.0.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",

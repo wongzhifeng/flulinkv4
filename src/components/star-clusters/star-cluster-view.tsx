@@ -14,7 +14,7 @@ interface ClusterMember extends User {
   contribution: number
 }
 
-interface StarClusterViewProps {
+export interface StarClusterViewProps {
   currentUser: User
   onClusterClick: (cluster: StarCluster) => void
   onJoinCluster: (clusterId: string) => void

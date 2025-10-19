@@ -1,0 +1,105 @@
+# FluLink AI-Native Zeabur 部署配置
+# 基于《德道经》"无为而治"哲学，实现一键部署
+
+services:
+  # PocketBase 后端服务
+  pocketbase:
+    build:
+      context: ./pocketbase
+      dockerfile: Dockerfile
+    ports:
+      - 8090:8090
+    environment:
+      - PB_ENCRYPTION_KEY=${PB_ENCRYPTION_KEY}
+      - PB_HOOKS_DIR=/app/pocketbase/hooks
+      - PB_PUBLIC_URL=${PUBLIC_URL}
+      - PB_ADMIN_EMAIL=${PB_ADMIN_EMAIL}
+      - PB_ADMIN_PASSWORD=${PB_ADMIN_PASSWORD}
+      - AI_AGENT_URL=${AI_AGENT_URL}
+      - CHROMA_URL=${CHROMA_URL}
+    volumes:
+      - pb_data:/pb_data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Chroma 向量数据库
+  chroma:
+    build:
+      context: ./chroma
+      dockerfile: Dockerfile
+    ports:
+      - 8001:8000
+    environment:
+      - CHROMA_SERVER_HOST=0.0.0.0
+      - CHROMA_SERVER_HTTP_PORT=8000
+      - CHROMA_PERSIST_DIRECTORY=/chroma/chroma
+    volumes:
+      - chroma_data:/chroma/chroma
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # AI Agent 智能服务
+  ai-agent:
+    build:
+      context: ./ai-agent
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    environment:
+      - CONTEXT7_API_KEY=${CONTEXT7_API_KEY}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - POCKETBASE_URL=${POCKETBASE_URL}
+      - POCKETBASE_ADMIN_EMAIL=${PB_ADMIN_EMAIL}
+      - POCKETBASE_ADMIN_PASSWORD=${PB_ADMIN_PASSWORD}
+      - CHROMA_URL=${CHROMA_URL}
+      - ENVIRONMENT=production
+    depends_on:
+      - pocketbase
+      - chroma
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Next.js 前端服务
+  frontend:
+    build:
+      context: ./nextjs-frontend
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_POCKETBASE_URL=${POCKETBASE_URL}
+      - NEXT_PUBLIC_AI_AGENT_URL=${AI_AGENT_URL}
+      - NEXT_PUBLIC_CHROMA_URL=${CHROMA_URL}
+      - NEXT_PUBLIC_APP_URL=${PUBLIC_URL}
+    depends_on:
+      - pocketbase
+      - ai-agent
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  pb_data:
+    driver: local
+  chroma_data:
+    driver: local
+
+networks:
+  default:
+    driver: bridge

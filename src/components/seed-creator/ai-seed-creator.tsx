@@ -21,7 +21,7 @@ interface Message {
   timestamp: Date
 }
 
-interface AISeedCreatorProps {
+export interface AISeedCreatorProps {
   currentUser: User
   onSeedCreated: (seed: StarSeed) => void
   className?: string

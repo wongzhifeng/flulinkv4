@@ -7,7 +7,7 @@ import { Card, Button, Input, Avatar, Tag, Loading } from '@/components/ui/index
 import { cn, formatDate, formatNumber } from '@/lib/utils'
 import { User, StarSeed, StarCluster } from '@/lib/pocketbase'
 
-interface UserProfileProps {
+export interface UserProfileProps {
   currentUser: User
   onUpdateProfile: (updates: Partial<User>) => Promise<void>
   onLogout: () => void

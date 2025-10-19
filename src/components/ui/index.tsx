@@ -4,7 +4,7 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 
 // 按钮组件
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'danger' | 'ghost'
   size?: 'sm' | 'md' | 'lg'
   loading?: boolean
@@ -59,7 +59,7 @@ export const Button: React.FC<ButtonProps> = ({
 }
 
 // 输入框组件
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string
   error?: string
   icon?: React.ReactNode
@@ -103,7 +103,7 @@ export const Input: React.FC<InputProps> = ({
 }
 
 // 文本域组件
-interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string
   error?: string
 }
@@ -137,7 +137,7 @@ export const Textarea: React.FC<TextareaProps> = ({
 }
 
 // 卡片组件
-interface CardProps {
+export interface CardProps {
   children: React.ReactNode
   className?: string
   hover?: boolean
@@ -165,7 +165,7 @@ export const Card: React.FC<CardProps> = ({
 }
 
 // 模态框组件
-interface ModalProps {
+export interface ModalProps {
   isOpen: boolean
   onClose: () => void
   title?: string
@@ -225,7 +225,7 @@ export const Modal: React.FC<ModalProps> = ({
 }
 
 // 加载组件
-interface LoadingProps {
+export interface LoadingProps {
   size?: 'sm' | 'md' | 'lg'
   text?: string
 }
@@ -251,7 +251,7 @@ export const Loading: React.FC<LoadingProps> = ({
 }
 
 // 标签组件
-interface TagProps {
+export interface TagProps {
   children: React.ReactNode
   variant?: 'default' | 'gold' | 'red' | 'purple' | 'cyan'
   size?: 'sm' | 'md'
@@ -292,7 +292,7 @@ export const Tag: React.FC<TagProps> = ({
 }
 
 // 头像组件
-interface AvatarProps {
+export interface AvatarProps {
   src?: string
   alt?: string
   size?: 'sm' | 'md' | 'lg' | 'xl'

@@ -16,7 +16,7 @@ interface StarPosition {
   distance: number
 }
 
-interface StarMapProps {
+export interface StarMapProps {
   currentUser: User
   onStarClick: (star: StarSeed) => void
   className?: string

@@ -1,0 +1,538 @@
+[
+  {
+    "id": "TC001",
+    "title": "User Registration Success",
+    "description": "Verify that a new user can successfully register with valid credentials.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the registration page."
+      },
+      {
+        "type": "action",
+        "description": "Enter valid user details including username, email, and password."
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that the user is registered successfully and redirected to the dashboard or login page."
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "User Registration Input Validation",
+    "description": "Validate registration form input fields reject invalid data and show appropriate error messages.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the registration page."
+      },
+      {
+        "type": "action",
+        "description": "Input invalid or incomplete data in username, email, and password fields."
+      },
+      {
+        "type": "action",
+        "description": "Attempt to submit the registration form."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify error messages are shown for invalid or missing inputs and registration is not allowed."
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "User Login Success",
+    "description": "Ensure users can log in successfully with valid credentials.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page."
+      },
+      {
+        "type": "action",
+        "description": "Enter valid username/email and password."
+      },
+      {
+        "type": "action",
+        "description": "Click the login button."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user is authenticated and redirected to the main dashboard."
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "User Login Failure with Incorrect Credentials",
+    "description": "Verify login fails with incorrect username/email or password and appropriate error is displayed.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page."
+      },
+      {
+        "type": "action",
+        "description": "Input incorrect username/email or password."
+      },
+      {
+        "type": "action",
+        "description": "Attempt to login."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that login is denied and error message is shown."
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Session Management and Logout",
+    "description": "Validate that user sessions persist correctly and logout functionality works.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login with valid credentials."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify session token or cookie is set and user remains logged in across page reloads."
+      },
+      {
+        "type": "action",
+        "description": "Click logout button."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify user session is cleared and user is redirected to the login page."
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Navigation Component Responsiveness",
+    "description": "Verify the top navigation, bottom navigation, and sidebar adapt correctly on different screen sizes and devices.",
+    "category": "ui",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Access the platform on desktop, tablet, and mobile screen resolutions."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify navigation components render properly and navigation controls are accessible and functional on all devices."
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "UI Components Consistency and Accessibility",
+    "description": "Test reusable UI components (buttons, cards, inputs, modals) for consistent styling, functionality, and accessibility compliance.",
+    "category": "ui",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Render each UI component in isolation with various props and states (enabled, disabled, focused, error)."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify components appear consistent across browsers and meet accessibility standards (ARIA roles, keyboard navigation)."
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Dashboard Home Page Functionality",
+    "description": "Verify that the dashboard home page displays the welcome message and quick action buttons work correctly.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login and navigate to the dashboard home page."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the welcome message is visible."
+      },
+      {
+        "type": "action",
+        "description": "Click on the quick action buttons (e.g., create star seed, view clusters)."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify navigation to respective pages is successful and functional."
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "User Profile Page - Settings Update and Statistics",
+    "description": "Validate that users can view and update their profile settings and see usage statistics accurately.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the profile page after login."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify user information and usage statistics are displayed."
+      },
+      {
+        "type": "action",
+        "description": "Modify profile settings such as display name or email."
+      },
+      {
+        "type": "action",
+        "description": "Save changes."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that changes persist and are reflected correctly."
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Star Seed Creation Interface",
+    "description": "Check that the star seed creation interface allows intuitive strain creation with validation and feedback.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the star seed creation page."
+      },
+      {
+        "type": "action",
+        "description": "Fill in valid data for the virus strain creation."
+      },
+      {
+        "type": "action",
+        "description": "Submit the creation form."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that the star seed is successfully created and listed."
+      },
+      {
+        "type": "action",
+        "description": "Input invalid or incomplete data."
+      },
+      {
+        "type": "action",
+        "description": "Try to submit the form."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify validation errors appear and creation is blocked."
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Star Clusters Page - Management and Viewing",
+    "description": "Verify that users can view, search, and manage existing star clusters effectively.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the star clusters page."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify clusters are listed with correct details."
+      },
+      {
+        "type": "action",
+        "description": "Use search or filter functionality to find specific clusters."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify results update correctly."
+      },
+      {
+        "type": "action",
+        "description": "Perform cluster management actions such as edit or delete."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify changes are reflected accurately and no data inconsistencies occur."
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Interactive Star Map Visualization Accuracy and Responsiveness",
+    "description": "Ensure the star map visualizes geospatial data accurately and responds smoothly to user interaction such as zoom and pan.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to star map component."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify displayed clusters correspond to backend data."
+      },
+      {
+        "type": "action",
+        "description": "Zoom in/out and pan the map."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify map interactions are smooth with no visual glitches or delays."
+      },
+      {
+        "type": "action",
+        "description": "Select a cluster on the map."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify cluster details are displayed correctly."
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "AI Service Vector Similarity Search Validity",
+    "description": "Test that the AI backend processes vector similarity search requests returning accurate and timely matches.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send similarity search requests with valid vectors to the AI service."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the AI service returns correct similarity results consistent with expected output."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response times meet acceptable latency thresholds."
+      },
+      {
+        "type": "action",
+        "description": "Send malformed or invalid vector data."
+      },
+      {
+        "type": "assertion",
+        "description": "Ensure the AI service handles errors gracefully with valid error messages."
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Vector Database Integration Stability and Accuracy",
+    "description": "Verify the integration with ChromaDB correctly stores, retrieves, and manages vector data for similarity search.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Add vectors representing virus strains to the database."
+      },
+      {
+        "type": "action",
+        "description": "Query similarity data from the vector database."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm retrieved data matches expected similarity relationships."
+      },
+      {
+        "type": "action",
+        "description": "Attempt database operations with invalid data."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify errors are handled and logged without crashing the system."
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Deployment using Docker and Zeabur - Build and Stability",
+    "description": "Validate that the system components build correctly into Docker containers and deploy on Zeabur without downtime or failure.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Execute Docker build process for frontend and backend images."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify images build with no errors."
+      },
+      {
+        "type": "action",
+        "description": "Deploy containers to Zeabur cloud platform using provided configuration."
+      },
+      {
+        "type": "assertion",
+        "description": "Ensure services start and remain stable during deployment."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify zero downtime with continuous availability via health checks and monitoring."
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "System Monitoring and Health Tracking",
+    "description": "Test the comprehensive monitoring system tracks API usage, deployment status, and performance metrics effectively.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Generate API traffic through various platform usage."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify monitoring dashboards/logs capture and display API usage statistics correctly."
+      },
+      {
+        "type": "action",
+        "description": "Simulate deployment status changes or service failures."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm monitoring detects issues and alerts are generated."
+      },
+      {
+        "type": "action",
+        "description": "Check response times and performance metrics collection."
+      },
+      {
+        "type": "assertion",
+        "description": "Validate metrics accuracy and timely reporting."
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "Security - Unauthorized Access Prevention",
+    "description": "Verify that unauthorized users cannot access protected routes or perform restricted actions.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Attempt to access dashboard, profile, create, clusters, or AI service endpoints without login."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify access is denied and user is redirected to login."
+      },
+      {
+        "type": "action",
+        "description": "Attempt data modification requests without a valid session."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm that actions are rejected with appropriate error messages."
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "Error Handling in AI Service Backend",
+    "description": "Validate that the FastAPI AI service gracefully handles invalid inputs and unexpected errors without crashing.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send malformed requests including invalid JSON, missing required fields, or unsupported operations."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the AI service returns meaningful error codes and messages."
+      },
+      {
+        "type": "action",
+        "description": "Simulate backend exceptions or failures."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm the service logs errors and returns 5xx responses without crashing."
+      }
+    ]
+  },
+  {
+    "id": "TC019",
+    "title": "Performance under Load",
+    "description": "Test system performance and scalability under high user and AI query load conditions.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Simulate concurrent user registrations, logins, and strain creation."
+      },
+      {
+        "type": "action",
+        "description": "Generate multiple simultaneous AI similarity search requests."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify system responsiveness stays within acceptable limits without failures."
+      },
+      {
+        "type": "assertion",
+        "description": "Check cloud deployment scales resources correctly and recovers from load spikes."
+      }
+    ]
+  },
+  {
+    "id": "TC020",
+    "title": "Data Consistency across Frontend and Backend",
+    "description": "Ensure that data changes made via UI are correctly reflected in backend and vice versa.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Create and update virus strains or clusters via frontend forms."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify data persisted in backend matches input."
+      },
+      {
+        "type": "action",
+        "description": "Modify data directly via backend or API."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm frontend displays updated data correctly."
+      }
+    ]
+  }
+]

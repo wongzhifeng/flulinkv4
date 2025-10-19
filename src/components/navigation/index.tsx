@@ -4,7 +4,7 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 
 // 顶部导航栏
-interface TopNavProps {
+export interface TopNavProps {
   title?: string
   user?: {
     name: string
@@ -67,7 +67,7 @@ export const TopNav: React.FC<TopNavProps> = ({
 }
 
 // 底部导航栏
-interface BottomNavProps {
+export interface BottomNavProps {
   currentPage: string
   onPageChange: (page: string) => void
 }
@@ -137,7 +137,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
 }
 
 // 侧边栏导航
-interface SidebarProps {
+export interface SidebarProps {
   isOpen: boolean
   onClose: () => void
   currentPage: string
@@ -254,7 +254,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }
 
 // 面包屑导航
-interface BreadcrumbProps {
+export interface BreadcrumbProps {
   items: Array<{
     label: string
     href?: string
@@ -287,7 +287,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
 }
 
 // 标签导航
-interface TabNavProps {
+export interface TabNavProps {
   tabs: Array<{
     id: string
     label: string

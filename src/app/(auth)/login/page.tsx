@@ -6,16 +6,10 @@ import React, { useState } from 'react'
 import { Button, Input, Card, Loading } from '@/components/ui/index'
 import { cn, isValidEmail, validatePassword } from '@/lib/utils'
 import { api } from '@/lib/pocketbase'
+import { useRouter } from 'next/navigation'
 
-interface LoginPageProps {
-  onLoginSuccess: (user: any) => void
-  onSwitchToRegister: () => void
-}
-
-export const LoginPage: React.FC<LoginPageProps> = ({
-  onLoginSuccess,
-  onSwitchToRegister
-}) => {
+export const LoginPage: React.FC = () => {
+  const router = useRouter()
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -56,7 +50,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({
     try {
       setIsLoading(true)
       const user = await api.login(formData.email, formData.password)
-      onLoginSuccess(user)
+      // 登录成功后跳转到主页
+      router.push('/')
     } catch (error: any) {
       console.error('登录失败:', error)
       setErrors({ 
@@ -142,7 +137,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
               <p className="text-text-secondary text-sm">
                 还没有账户？
                 <button
-                  onClick={onSwitchToRegister}
+                  onClick={() => router.push('/register')}
                   className="text-accent-gold hover:text-accent-cyan transition-colors ml-1"
                 >
                   立即注册
@@ -185,14 +180,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 }
 
 // App Router 页面组件默认导出
-// 注意：本页面为 client 组件，不能导出 metadata，避免 Next.js 构建报错
-
 export default function Page() {
-  const handleSuccess = (_user: any) => {
-    // 登录成功后可在此进行路由跳转或状态更新
-  }
-  const handleSwitch = () => {
-    // 切换到注册页的逻辑，可使用路由跳转
-  }
-  return <LoginPage onLoginSuccess={handleSuccess} onSwitchToRegister={handleSwitch} />
+  return <LoginPage />
 }

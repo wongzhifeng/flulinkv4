@@ -1,0 +1,120 @@
+{
+  "tech_stack": [
+    "TypeScript",
+    "Next.js 14.2.0",
+    "React 18",
+    "Tailwind CSS",
+    "PocketBase",
+    "FastAPI",
+    "ChromaDB",
+    "Docker",
+    "Zeabur"
+  ],
+  "features": [
+    {
+      "name": "Authentication System",
+      "description": "User login and registration with PocketBase backend",
+      "files": [
+        "src/app/(auth)/login/page.tsx",
+        "src/app/(auth)/register/page.tsx",
+        "src/app/(auth)/layout.tsx",
+        "src/lib/pocketbase.ts"
+      ]
+    },
+    {
+      "name": "Navigation Components",
+      "description": "Top navigation, bottom navigation, and sidebar components",
+      "files": [
+        "src/components/navigation/index.tsx"
+      ]
+    },
+    {
+      "name": "UI Component Library",
+      "description": "Reusable UI components including Button, Card, Input, Modal, etc.",
+      "files": [
+        "src/components/ui/index.tsx"
+      ]
+    },
+    {
+      "name": "Home Page",
+      "description": "Main dashboard with welcome message and quick actions",
+      "files": [
+        "src/app/(main)/page.tsx"
+      ]
+    },
+    {
+      "name": "Profile Page",
+      "description": "User profile management with settings and statistics",
+      "files": [
+        "src/app/(main)/profile/page.tsx",
+        "src/components/user-profile/user-profile.tsx"
+      ]
+    },
+    {
+      "name": "Create Page",
+      "description": "Star seed creation interface",
+      "files": [
+        "src/app/(main)/create/page.tsx",
+        "src/components/seed-creator/ai-seed-creator.tsx"
+      ]
+    },
+    {
+      "name": "Clusters Page",
+      "description": "Star clusters management and viewing",
+      "files": [
+        "src/app/(main)/clusters/page.tsx",
+        "src/components/star-clusters/star-cluster-view.tsx"
+      ]
+    },
+    {
+      "name": "Star Map Component",
+      "description": "Interactive star map visualization",
+      "files": [
+        "src/components/star-map/star-map.tsx"
+      ]
+    },
+    {
+      "name": "Vector Database Integration",
+      "description": "AI-powered vector similarity search and matching",
+      "files": [
+        "src/lib/vector-db.ts"
+      ]
+    },
+    {
+      "name": "Utility Functions",
+      "description": "Common utility functions for formatting, validation, etc.",
+      "files": [
+        "src/lib/utils.ts"
+      ]
+    },
+    {
+      "name": "AI Service",
+      "description": "FastAPI backend for AI operations and vector processing",
+      "files": [
+        "ai-service/main.py",
+        "ai-service/requirements.txt",
+        "ai-service/Dockerfile"
+      ]
+    },
+    {
+      "name": "Database Schema",
+      "description": "PocketBase database schema and API definitions",
+      "files": [
+        "pocketbase/schema.json",
+        "pocketbase/README.md"
+      ]
+    },
+    {
+      "name": "Deployment Configuration",
+      "description": "Docker and Zeabur deployment configurations",
+      "files": [
+        "Dockerfile.frontend",
+        "zeabur.yaml",
+        "next.config.js",
+        "package.json"
+      ]
+    }
+  ]
+}
+
+

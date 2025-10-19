@@ -6,16 +6,10 @@ import React, { useState } from 'react'
 import { Button, Input, Card, Loading } from '@/components/ui/index'
 import { cn, isValidEmail, validatePassword } from '@/lib/utils'
 import { api } from '@/lib/pocketbase'
+import { useRouter } from 'next/navigation'
 
-interface RegisterPageProps {
-  onRegisterSuccess: (user: any) => void
-  onSwitchToLogin: () => void
-}
-
-export const RegisterPage: React.FC<RegisterPageProps> = ({
-  onRegisterSuccess,
-  onSwitchToLogin
-}) => {
+export const RegisterPage: React.FC = () => {
+  const router = useRouter()
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -75,7 +69,8 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
     try {
       setIsLoading(true)
       const user = await api.register(formData.username, formData.email, formData.password)
-      onRegisterSuccess(user)
+      // 注册成功后跳转到主页
+      router.push('/')
     } catch (error: any) {
       console.error('注册失败:', error)
       setErrors({ 
@@ -185,7 +180,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
               <p className="text-text-secondary text-sm">
                 已有账户？
                 <button
-                  onClick={onSwitchToLogin}
+                  onClick={() => router.push('/login')}
                   className="text-accent-gold hover:text-accent-cyan transition-colors ml-1"
                 >
                   立即登录
@@ -228,11 +223,5 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
 }
 
 export default function Page() {
-  const handleSuccess = (_user: any) => {
-    // 注册成功后的跳转或状态处理
-  }
-  const handleSwitch = () => {
-    // 切换到登录页逻辑
-  }
-  return <RegisterPage onRegisterSuccess={handleSuccess} onSwitchToLogin={handleSwitch} />
+  return <RegisterPage />
 }
