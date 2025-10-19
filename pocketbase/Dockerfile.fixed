@@ -1,24 +1,21 @@
-# FluLink PocketBase Dockerfile
-# 基于《德道经》"无为而治"哲学，构建数据存储服务容器
+# FluLink PocketBase Dockerfile - 修复版
+# 解决ghcr.io访问限制问题，使用官方GitHub Releases
 
-# 使用官方Docker Hub镜像，避免ghcr.io访问限制
-FROM alpine/git:latest AS downloader
+FROM alpine:latest
 
-# 下载PocketBase二进制文件
+# 安装运行时依赖
+RUN apk add --no-cache \
+    curl \
+    ca-certificates \
+    unzip \
+    wget
+
+# 下载并安装PocketBase
 RUN wget -O /tmp/pocketbase.zip https://github.com/pocketbase/pocketbase/releases/download/v0.23.0/pocketbase_0.23.0_linux_amd64.zip && \
     unzip /tmp/pocketbase.zip -d /tmp/ && \
     mv /tmp/pocketbase /usr/local/bin/pocketbase && \
     chmod +x /usr/local/bin/pocketbase && \
     rm /tmp/pocketbase.zip
-
-# 使用Alpine Linux作为运行时
-FROM alpine:latest
-
-# 安装运行时依赖
-RUN apk add --no-cache curl ca-certificates
-
-# 复制PocketBase二进制文件
-COPY --from=downloader /usr/local/bin/pocketbase /usr/local/bin/pocketbase
 
 # 设置工作目录
 WORKDIR /app
