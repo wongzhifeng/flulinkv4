@@ -1,0 +1,37 @@
+# FluLink PocketBase Dockerfile - 官方预构建二进制版
+# 基于您发现的最佳实践，直接使用官方预构建文件
+
+FROM alpine:latest
+
+# 安装运行时依赖
+RUN apk add --no-cache \
+    curl \
+    ca-certificates \
+    unzip \
+    wget
+
+# 直接下载官方预构建的PocketBase二进制文件
+# 使用最新稳定版本 v0.23.0，无需从源码编译
+RUN wget -O /tmp/pocketbase.zip https://github.com/pocketbase/pocketbase/releases/download/v0.23.0/pocketbase_0.23.0_linux_amd64.zip && \
+    unzip /tmp/pocketbase.zip -d /tmp/ && \
+    mv /tmp/pocketbase /usr/local/bin/pocketbase && \
+    chmod +x /usr/local/bin/pocketbase && \
+    rm /tmp/pocketbase.zip
+
+# 设置工作目录
+WORKDIR /app
+
+# 复制PocketBase配置
+COPY pb_schema.json /app/pb_schema.json
+COPY pb_hooks/ /app/pocketbase/hooks/
+COPY pb_migrations/ /app/pocketbase/migrations/
+
+# 暴露端口
+EXPOSE 8090
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8090/api/health || exit 1
+
+# 启动命令
+CMD ["/usr/local/bin/pocketbase", "serve", "--http=0.0.0.0:8090"]
