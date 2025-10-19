@@ -1,0 +1,23 @@
+# FluLink 前端简化配置 - 修复502错误
+# 临时配置，确保基本功能可用
+
+services:
+  # Next.js 前端服务 - 简化配置
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_POCKETBASE_URL=https://pocketbase-new.zeabur.app
+      - NEXT_PUBLIC_AI_AGENT_URL=https://ai-service-flulink.zeabur.app
+      - NEXT_PUBLIC_CHROMA_URL=http://chroma:8000
+      - NEXT_PUBLIC_APP_URL=https://flulink-v4.zeabur.app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s

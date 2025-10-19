@@ -20,7 +20,9 @@ const nextConfig = {
   },
   env: {
     NEXT_PUBLIC_POCKETBASE_URL: process.env.NEXT_PUBLIC_POCKETBASE_URL,
-    NEXT_PUBLIC_AI_SERVICE_URL: process.env.NEXT_PUBLIC_AI_SERVICE_URL,
+    NEXT_PUBLIC_AI_AGENT_URL: process.env.NEXT_PUBLIC_AI_AGENT_URL,
+    NEXT_PUBLIC_CHROMA_URL: process.env.NEXT_PUBLIC_CHROMA_URL,
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   },
   webpack: (config) => {
     config.resolve.alias = {
