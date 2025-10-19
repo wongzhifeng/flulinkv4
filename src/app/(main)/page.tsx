@@ -1,4 +1,4 @@
-// FluLink v4.0 主页面组件
+// FluLink v4.0 主页面组件 - 修复预渲染问题
 
 'use client'
 
@@ -12,8 +12,12 @@ export default function HomePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [currentUser, setCurrentUser] = useState({ username: '用户', avatar: '' })
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    // 确保组件已挂载，避免服务端渲染问题
+    setMounted(true)
+    
     // 模拟用户数据加载
     const timer = setTimeout(() => {
       setCurrentUser({ username: 'FluLink 用户', avatar: '' })
@@ -22,6 +26,15 @@ export default function HomePage() {
 
     return () => clearTimeout(timer)
   }, [])
+
+  // 在服务端渲染时返回简单的加载状态
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-primary-bg flex items-center justify-center">
+        <Loading size="lg" />
+      </div>
+    )
+  }
 
   const handleMenuClick = () => {
     setSidebarOpen(true)
