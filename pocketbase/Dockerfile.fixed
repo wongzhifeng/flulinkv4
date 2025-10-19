@@ -10,8 +10,9 @@ RUN apk add --no-cache \
     unzip \
     wget
 
-# 下载并安装PocketBase
-RUN wget -O /tmp/pocketbase.zip https://github.com/pocketbase/pocketbase/releases/download/v0.23.0/pocketbase_0.23.0_linux_amd64.zip && \
+# 下载并安装PocketBase - 使用稳定版本避免Go版本冲突
+# PocketBase v0.22.0 使用Go 1.21，与Alpine镜像兼容
+RUN wget -O /tmp/pocketbase.zip https://github.com/pocketbase/pocketbase/releases/download/v0.22.0/pocketbase_0.22.0_linux_amd64.zip && \
     unzip /tmp/pocketbase.zip -d /tmp/ && \
     mv /tmp/pocketbase /usr/local/bin/pocketbase && \
     chmod +x /usr/local/bin/pocketbase && \

@@ -1,25 +1,22 @@
-# FluLink PocketBase Dockerfile
-# 基于《德道经》"无为而治"哲学，构建数据存储服务容器
+# FluLink PocketBase Dockerfile - Go版本兼容修复版
+# 解决Go版本不匹配问题，使用稳定的PocketBase版本
 
-# 使用官方Docker Hub镜像，避免ghcr.io访问限制
-FROM alpine/git:latest AS downloader
+FROM alpine:latest
 
-# 下载PocketBase二进制文件 - 使用稳定版本避免Go版本冲突
-# PocketBase v0.22.0 使用Go 1.21，与Alpine镜像兼容
+# 安装运行时依赖
+RUN apk add --no-cache \
+    curl \
+    ca-certificates \
+    unzip \
+    wget
+
+# 使用稳定的PocketBase版本，避免Go版本冲突
+# PocketBase v0.22.0 使用Go 1.21，更稳定
 RUN wget -O /tmp/pocketbase.zip https://github.com/pocketbase/pocketbase/releases/download/v0.22.0/pocketbase_0.22.0_linux_amd64.zip && \
     unzip /tmp/pocketbase.zip -d /tmp/ && \
     mv /tmp/pocketbase /usr/local/bin/pocketbase && \
     chmod +x /usr/local/bin/pocketbase && \
     rm /tmp/pocketbase.zip
-
-# 使用Alpine Linux作为运行时
-FROM alpine:latest
-
-# 安装运行时依赖
-RUN apk add --no-cache curl ca-certificates
-
-# 复制PocketBase二进制文件
-COPY --from=downloader /usr/local/bin/pocketbase /usr/local/bin/pocketbase
 
 # 设置工作目录
 WORKDIR /app
