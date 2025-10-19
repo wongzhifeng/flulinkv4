@@ -46,14 +46,14 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# 复制构建产物
+# 复制构建产物和依赖
 COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
 
 # 设置权限
-RUN mkdir -p .next
-RUN chown nextjs:nodejs .next
+RUN chown -R nextjs:nodejs /app
 
 # 切换到非root用户
 USER nextjs
@@ -69,5 +69,5 @@ ENV HOSTNAME="0.0.0.0"
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
   CMD curl -f http://localhost:3000/api/health || exit 1
 
-# 启动命令
-CMD ["node", "server.js"]
+# 启动命令 - 使用npm start而不是standalone模式
+CMD ["npm", "start"]

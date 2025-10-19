@@ -6,7 +6,8 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const nextConfig = {
-  output: 'standalone',
+  // 移除 standalone 输出模式，使用默认的服务器渲染模式
+  // output: 'standalone', // 注释掉这行，避免预渲染错误
   images: {
     domains: ['localhost', 'your-domain.zeabur.app', 'flulink-v4.zeabur.app'],
   },
