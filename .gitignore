@@ -4,6 +4,9 @@ backup/
 testsprite_tests/
 mcp-servers/
 flulink-app/
+ARCHITECTURE_UPGRADE.md
+DEPLOYMENT_FIX_GUIDE.md
+FORCE_DEPLOYMENT.md
 
 # Node.js
 node_modules/
