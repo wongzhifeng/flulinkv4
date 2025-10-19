@@ -131,7 +131,7 @@ export default function PerformanceDashboard() {
                   {report.pageLoad.average.toFixed(0)}ms
                 </div>
                 <div className="text-xs text-text-secondary">
-                  目标: <{report.pageLoad.target}ms
+                  目标: &lt;{report.pageLoad.target}ms
                 </div>
               </div>
 
@@ -145,7 +145,7 @@ export default function PerformanceDashboard() {
                   {report.apiResponse.average.toFixed(0)}ms
                 </div>
                 <div className="text-xs text-text-secondary">
-                  目标: <{report.apiResponse.target}ms
+                  目标: &lt;{report.apiResponse.target}ms
                 </div>
               </div>
 
@@ -159,7 +159,7 @@ export default function PerformanceDashboard() {
                   {report.renderTime.average.toFixed(0)}ms
                 </div>
                 <div className="text-xs text-text-secondary">
-                  目标: <{report.renderTime.target}ms
+                  目标: &lt;{report.renderTime.target}ms
                 </div>
               </div>
 
@@ -173,7 +173,7 @@ export default function PerformanceDashboard() {
                   {(report.cacheHitRate.average * 100).toFixed(1)}%
                 </div>
                 <div className="text-xs text-text-secondary">
-                  目标: >{(report.cacheHitRate.target * 100).toFixed(0)}%
+                  目标: &gt;{(report.cacheHitRate.target * 100).toFixed(0)}%
                 </div>
               </div>
             </div>
