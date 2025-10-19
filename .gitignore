@@ -1,39 +1,62 @@
+# 本地开发文件 - 不应该推送到生产仓库
+memory/
+backup/
+testsprite_tests/
+mcp-servers/
+flulink-app/
+
+# Node.js
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-.git/
-.expo/
+# Next.js
+.next/
+out/
+build/
 
-dist/
-web-build/
-expo-env.d.ts
+# 环境变量
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
 
-.metro-health-check*
-
-npm-debug.*
-yarn-debug.*
-yarn-error.*
-
+# OS
 .DS_Store
-*.pem
+Thumbs.db
 
-.env*.local
+# 日志
+*.log
+logs/
 
-*.tsbuildinfo
+# 临时文件
+tmp/
+temp/
+.tmp/
 
-.natively/
+# PocketBase 本地数据
+pocketbase/data/
+pocketbase/logs/
 
-android/
-ios/
+# AI 服务缓存
+ai-service/models/
+ai-service/cache/
 
-netlify.toml
-.netlify/
+# Docker
+.dockerignore
 
-pnpm-lock.yaml
-package-lock.json
+# 测试覆盖率
+coverage/
+.nyc_output/
+
+# 其他
+*.tgz
+*.tar.gz
