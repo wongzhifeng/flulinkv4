@@ -6,9 +6,11 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const nextConfig = {
-  // 移除 standalone 输出模式，使用默认的服务器渲染模式
-  // output: 'standalone', // 注释掉这行，避免预渲染错误
+  // 禁用静态生成，使用动态渲染
+  output: 'export',
+  trailingSlash: true,
   images: {
+    unoptimized: true,
     domains: ['localhost', 'your-domain.zeabur.app', 'flulink-v4.zeabur.app'],
   },
   typescript: {

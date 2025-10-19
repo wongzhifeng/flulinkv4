@@ -1,0 +1,156 @@
+# FluLink v4.0 Zeabur 优化部署配置
+# 基于 Zeabur 官方文档最佳实践
+
+services:
+  # PocketBase 后端服务 - 优化配置
+  pocketbase:
+    build:
+      context: ./pocketbase
+      dockerfile: Dockerfile.binary  # 使用优化的二进制版本
+    ports:
+      - 8090:8090
+    environment:
+      # 核心配置
+      - PB_ENCRYPTION_KEY=${PB_ENCRYPTION_KEY}
+      - PB_ADMIN_EMAIL=${PB_ADMIN_EMAIL}
+      - PB_ADMIN_PASSWORD=${PB_ADMIN_PASSWORD}
+      - PB_PUBLIC_URL=${PUBLIC_URL}
+      
+      # 服务集成
+      - AI_AGENT_URL=${AI_AGENT_URL}
+      - CHROMA_URL=${CHROMA_URL}
+      
+      # 性能优化
+      - PB_HOOKS_DIR=/app/pocketbase/hooks
+      - PB_MIGRATIONS_DIR=/app/pocketbase/migrations
+      
+    volumes:
+      - pb_data:/pb_data  # 持久存储
+      
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+      
+    # 资源限制优化
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+
+  # Chroma 向量数据库 - 新增服务
+  chroma:
+    build:
+      context: ./chroma
+      dockerfile: Dockerfile
+    ports:
+      - 8001:8000
+    environment:
+      - CHROMA_SERVER_HOST=0.0.0.0
+      - CHROMA_SERVER_HTTP_PORT=8000
+      - CHROMA_PERSIST_DIRECTORY=/chroma/chroma
+    volumes:
+      - chroma_data:/chroma/chroma  # 向量数据持久化
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # AI Agent 智能服务 - 优化配置
+  ai-agent:
+    build:
+      context: ./ai-agent
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    environment:
+      # AI 服务配置
+      - CONTEXT7_API_KEY=${CONTEXT7_API_KEY}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      
+      # 服务集成
+      - POCKETBASE_URL=${POCKETBASE_URL}
+      - POCKETBASE_ADMIN_EMAIL=${PB_ADMIN_EMAIL}
+      - POCKETBASE_ADMIN_PASSWORD=${PB_ADMIN_PASSWORD}
+      - CHROMA_URL=${CHROMA_URL}
+      
+      # 性能优化
+      - ENVIRONMENT=production
+      - LOG_LEVEL=info
+      
+    depends_on:
+      - pocketbase
+      - chroma
+      
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+      
+    # 资源限制优化
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+
+  # Next.js 前端服务 - 优化配置
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.production  # 使用优化的生产配置
+    ports:
+      - 3000:3000
+    environment:
+      # 生产环境
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      
+      # 服务集成
+      - NEXT_PUBLIC_POCKETBASE_URL=${POCKETBASE_URL}
+      - NEXT_PUBLIC_AI_AGENT_URL=${AI_AGENT_URL}
+      - NEXT_PUBLIC_CHROMA_URL=${CHROMA_URL}
+      - NEXT_PUBLIC_APP_URL=${PUBLIC_URL}
+      
+    depends_on:
+      - pocketbase
+      - ai-agent
+      
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+      
+    # 资源限制优化
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+
+# 持久存储配置
+volumes:
+  pb_data:
+    driver: local
+    # Zeabur 自动管理持久存储
+  chroma_data:
+    driver: local
+    # 向量数据持久化存储
+
+# 网络配置
+networks:
+  default:
+    driver: bridge
+    # 服务间内网通信优化
