@@ -74,7 +74,7 @@ services:
   # Next.js 前端服务
   frontend:
     build:
-      context: ./nextjs-frontend
+      context: .
       dockerfile: Dockerfile
     ports:
       - 3000:3000
